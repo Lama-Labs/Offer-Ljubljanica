@@ -268,7 +268,7 @@ export const terms = {
    * figure or any scope line below changes. A date works here too: the field is
    * a plain string and is printed verbatim.
    */
-  version: '1.2',
+  version: '1.0',
   /** Slovenian business audience reads a price as net unless told otherwise. */
   pricesIncludeVat: false,
   /**
