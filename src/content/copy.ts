@@ -64,7 +64,7 @@ export type FeatureItem = {
 export const hero = {
   eyebrow: 'Ponudba',
   heading: 'Modernizacija in optimizacija sistema za upravljanje rezervacij izletov z ladjico',
-  lead: 'Ponudba ima tri dele: rezervacijski sistem, ki sprejema goste tudi ob polnoči, novo stran, ki tujega turista pripelje od iskalnika do vkrcanja, in prenovo obstoječe strani, če se odločite še zanjo. Prva dva sta mišljena skupaj; tretji je najceneje prav takrat, ko delamo prva dva.',
+  lead: 'Predstavljamo ponudbo, sestavljeno iz 3 delov: **sistem za rezervacije in plačila**, nova **stran za tuje turiste** in **preoblikovanje obstoječe strani** za potrebe domačih gostov ter poslovnih partnerjev. Ponudba omogoča poljuben obseg izvedbe in dodatne popuste, glede na dogovorjeni obseg.',
   /** The card's own link, under the summary line. */
   cardCta: 'Podrobno',
   cardIn: 'V ponudbi',
@@ -103,18 +103,18 @@ export const takeaways = {
   items: [
     {
       icon: 'search',
-      title: 'Tujec vas najde in razume',
-      body: 'Tujec išče **“Ljubljana boat tour”** in se vkrca pri nekom, ki ga je našel. Nova stran govori samo o rednih plovbah, v njegovem jeziku, z rezervacijo v prvem zaslonu.',
+      title: 'Turisti vas lažje najdejo',
+      body: 'Tuji turist v iskalnik vpiše **“Ljubljana boat tour”**, ker želi enkratno doživetje na Ljubljanici. Nova stran govori samo o rednih plovbah, v njegovem jeziku, z rezervacijo na prvem zaslonu. Ne osredotoča se na piknike in zasebne najeme.',
     },
     {
       icon: 'moon',
       title: 'Prodajate tudi takrat, ko ne delate',
-      body: 'Gost, ki se odloči zvečer, ne dobi nikogar na telefon, jutri je na drugi ladji. V sistem lahko ročno vnesete svoje rezervacije, a sistem sprejema tudi tiste, ki pridejo ob polnoči.',
+      body: 'Turist, ki si želi rezervacijo opraviti izven uradnih ur, ali iz tujine, danes izgubite. V sistem lahko še vedno ročno vnesete telefonske rezervacije, a sistem sprejema tudi tiste, ki pridejo ob polnoči.',
     },
     {
       icon: 'banknote',
       title: 'Od vstopnice ne vzamemo nič',
-      body: 'Gost plača s kartico na **vaš** račun. Edini odbitek je bančna provizija, ki gre banki, mi si ne vzamemo ne odstotka ne fiksnega zneska, ne pri prvi vstopnici ne pri šesttisoči.',
+      body: 'Turist, ki plača s kartico, plača na **vaš** račun. Edini odbitek je bančna provizija, ki gre banki, mi ne vzamemo ne odstotka ne fiksnega zneska nakupa vstopnice.',
     },
   ] satisfies FeatureItem[],
 } as const
@@ -129,15 +129,15 @@ export const diagnosis = {
       items: [
         {
           title: 'Ime, ki ga nihče ne išče',
-          body: 'Tujec vtipka **“Ljubljana boat tour”**. Ne vtipka “Emona” in ne vtipka “ladjica”.',
+          body: 'Tuji turist vtipka **“Ljubljana boat tour”**. Ne vtipka “Emona” in ne vtipka “ladjica”.',
         },
         {
           title: 'Dve ponudbi na eni strani',
-          body: 'Dnevni izlet za tujca in zasebni piknik za domačega gosta sta dva posla. Ena stran za oboje prepriča polovico obeh.',
+          body: 'Dnevni izlet za turista in zasebni piknik za domačega gosta sta dva posla. Ena stran za oboje prepriča polovico obeh.',
         },
         {
           title: 'Preveč korakov do vkrcanja',
-          body: 'Gost, ki mora poklicati, da izve, ali je še prostor, večinoma ne pokliče. Pogleda naslednji zadetek na spletu.',
+          body: 'Turist, ki mora poklicati, da izve, ali je še prostor, večinoma ne pokliče. Pogleda naslednji zadetek na spletu.',
         },
       ],
     },
@@ -146,7 +146,7 @@ export const diagnosis = {
       items: [
         {
           title: 'Zadnji dve mesti, prodani dvakrat',
-          body: 'Ena oseba na pomolu, ena po telefonu, minuta razlike. Konča se z opravičilom in vračilom denarja.',
+          body: 'Ena oseba prodaja na lokaciji, ena po telefonu. Če se ne uskladita sproti, se zgodi, da se proda preveč ali pa premalo mest.',
         },
         {
           title: 'Rezervacija ob 23. uri je izgubljena',
@@ -154,7 +154,7 @@ export const diagnosis = {
         },
         {
           title: 'Do vkrcanja nihče ne ve prave številke',
-          body: 'Vozni red v preglednici, rezervacije v zvezku, denar v skrinjici. Seznam na pomolu je natisnjen zjutraj.',
+          body: 'Vozni red hranite v preglednici, rezervacije v zvezku, denar v skrinjici.',
         },
       ],
     },
@@ -164,7 +164,7 @@ export const diagnosis = {
 export const proposal = {
   eyebrow: 'Predlog',
   heading: 'Naša rešitev je sestavljena iz treh delov',
-  lead: 'Pripravili smo modularno ponudbo, ki jo lahko prilagodite svojim potrebam. Vsak del je podrobno opisan spodaj, vi pa izberete, kaj želite vključiti v svojo ponudbo. Skupna cena se bo sproti posodabljala glede na vaše izbire.',
+  lead: 'Pripravili smo modularno ponudbo, ki jo lahko prilagodite svojim potrebam. Vsak del je podrobno opisan spodaj, vi pa izberete, kaj želite vključiti v svojo ponudbo. Skupna cena in popusti se sproti posodabljajo glede na vašo izbiro.',
 } as const
 
 type PartCopy = {
@@ -202,7 +202,7 @@ export const parts: Record<OfferPartId, PartCopy> = {
   booking: {
     kicker: 'Sistem za rezervacije in spletna plačila',
     heading: 'Mesečna naročnina na Alpaca Booking',
-    lead: 'Alpaca Booking drži vozni red, sprejema rezervacije na pomolu, po telefonu in na vaši strani, pobere denar in seznam potnikov da v roke tistemu, ki stoji pri ladji. Gostom omogoča, da svojo rezervacijo opravijo neposredno na vaši strani, s pomočjo priročnega obrazca.',
+    lead: 'Alpaca Booking je sistem za upravljanje rezervacij. Omogoča spremljanje voznega reda, sprejem rezervacij na pomolu, po telefonu in na vaši strani. Turistom omogoča, da svojo rezervacijo opravijo samostojno na vaši strani. Prav tako omogoča spletna plačila.',
     groups: [
       {
         id: 'site',
@@ -211,7 +211,7 @@ export const parts: Record<OfferPartId, PartCopy> = {
           {
             icon: 'moon',
             title: 'Rezervacije tudi ob polnoči',
-            body: 'Gost izbere termin in plača, ko vas ni; če odide sredi plačila, gredo mesta po **35 minutah** nazaj v prodajo.',
+            body: 'Turist izbere termin in plača neposredno na spletni strani. V primeru, da rezervacije ne dokonča, gredo mesta po **35 minutah** nazaj v prodajo.',
           },
           {
             icon: 'brush',
@@ -220,8 +220,8 @@ export const parts: Record<OfferPartId, PartCopy> = {
           },
           {
             icon: 'code',
-            title: 'Dve vrstici in obrazec je gor',
-            body: 'Brez vtičnika, brez razvijalca, brez preusmeritve na tujo stran s tujim logotipom.',
+            title: 'Enostavna integracija',
+            body: 'Obrazec omogoča, da rezervacije in plačila vključite v vašo obstoječo spletno stran z enim klikom.',
           },
         ],
       },
@@ -231,18 +231,18 @@ export const parts: Record<OfferPartId, PartCopy> = {
         items: [
           {
             icon: 'calendar',
-            title: 'Sezono nastavite enkrat',
-            body: 'Narišete svoj teden, izberete obdobje od aprila do oktobra in sistem ustvari vse odhode naenkrat.',
+            title: 'Nastavitve sezone in urnika',
+            body: 'Za izbrano obdobje lahko nastvite ponavlajoči vozni red, ki se samodejno prenese v obrazec na vaši strani.',
           },
           {
             icon: 'tags',
-            title: 'Cene, kot jih res prodajate',
-            body: 'Vsaka vrsta vstopnice ima svojo ceno **in svoj prostor na ladji**; npr. dojenček v naročju je za 0 € in ne zasede sedeža.',
+            title: 'Prilagodljiv cenik',
+            body: 'Vsaka vrsta vstopnice ima svojo ceno **in svoj prostor na ladji**; npr. dojenček v naročju je brezplačen in ne zasede sedeža.',
           },
           {
             icon: 'dashboard',
-            title: 'Zaslon za današnji dan',
-            body: 'Kdo je vkrcan, koliko denarja je še odprtega in kateri odhodi v prihodnjem tednu ne bodo polni.',
+            title: 'Dnevni pregled rezervacij',
+            body: 'Kdo je vkrcan, kod mora plačati ob prihodu in kateri odhodi v prihodnjem tednu ne bodo polni.',
           },
         ],
       },
@@ -253,17 +253,17 @@ export const parts: Record<OfferPartId, PartCopy> = {
           {
             icon: 'clipboard',
             title: 'Seznam potnikov na telefonu',
-            body: 'Urejen po priimkih, s številkami in odprtim zneskom. Med označevanjem se ne prerazporeja.',
+            body: 'Urejen po priimkih, s številkami in odprtim zneskom.',
           },
           {
             icon: 'crew',
-            title: 'Posadka dobi dostop, ne knjig',
-            body: 'Študent na pomolu vidi današnji razpored in nič drugega. Cene, nastavitve in ostale rezervacije ostanejo vaše.',
+            title: 'Posadka dobi dostop, ne računovodskih knjig',
+            body: 'Študent na pomolu vidi današnji razpored in nič drugega.',
           },
           {
             icon: 'languages',
-            title: 'Vi slovensko, gost angleško',
-            body: 'Sistem vodite v svojem jeziku, obrazec in potrdilo pa prideta do gosta v njegovem.',
+            title: 'Vi slovensko, turist angleško',
+            body: 'Sistem vodite v svojem jeziku, obrazec in potrdilo pa prideta do turista v njegovem.',
           },
         ],
       },
@@ -282,8 +282,8 @@ export const parts: Record<OfferPartId, PartCopy> = {
         items: [
           {
             icon: 'globe',
-            title: 'Domena, ki pove, kaj je notri',
-            body: '**ljubljanicatours.com** vsebuje besedo, ki jo tujec vtipka. Obstoječa stran ostane taka, kot je.',
+            title: 'Domena, primerna za turiste',
+            body: '**ljubljanicatours.com** vsebuje besedo, ki jo turist vtipka. Obstoječa stran ostane taka, kot je.',
           },
           {
             icon: 'pointer',
@@ -298,17 +298,17 @@ export const parts: Record<OfferPartId, PartCopy> = {
           {
             icon: 'sparkle',
             title: 'Berljiva tudi za ChatGPT',
-            body: 'Strukturirani podatki o izletih, urnikih in cenah. Izboljša vidnost v spletni brskalniki in klepetih, ki jih poganja umetna inteligenca.',
+            body: 'Strukturirani podatki o izletih, urnikih in cenah. Izboljša vidnost v spletnih brskalnikih in klepetih, ki jih poganja umetna inteligenca.',
           },
           {
             icon: 'speed',
             title: 'Hitra na slabem signalu',
-            body: 'Gost jo odpre na pomolu, med hojo, med gostovanjem v tujem omrežju.',
+            body: 'Turist jo odpre na pomolu, med hojo, med gostovanjem v tujem omrežju.',
           },
           {
             icon: 'languages',
             title: 'Slovensko in angleško',
-            body: 'Angleščina je glavna, ker je glavni gost tujec.',
+            body: 'Angleščina je glavna, ker je glavni gost tuji turist.',
           },
           /*
             Where the reader first meets the monthly maintenance fee. Without a
@@ -347,7 +347,7 @@ export const parts: Record<OfferPartId, PartCopy> = {
   redesign: {
     kicker: 'Spletna stran za zasebni najem',
     heading: 'Domači gost pristane na stari strani...',
-    lead: 'Prva dva dela stojita tudi brez tega. Vendar je zasebni najem s pogostitvijo vaša največja posamična prodaja, gost zanj pa pride prav na ljubljanica.eu, ki bo ob novi strani **izpadla starejša**, kot je. Če obe strani nastaneta skupaj, ju tudi vzdržujemo skupaj — vzdrževanje je eno samo, ne dvojno.',
+    lead: 'Prva dva modula ponudbe delujeta neodvisno in sta namenjena tujim turistom. Zasebni najem s pogostitvijo je vaša največja posamična prodaja, gost zanj pride prav na ljubljanica.eu, ki bo ob novi strani **izpadla starejša**, kot je. Če obe strani nastaneta skupaj, plačate skupno ceno vzdrževanja.',
     groups: [
       {
         id: 'plan',
@@ -356,7 +356,7 @@ export const parts: Record<OfferPartId, PartCopy> = {
           {
             icon: 'crew',
             title: 'Za domačega gosta, ne za tujca',
-            body: 'Ko dnevne izlete prevzame nova stran, se ta posveti temu, kar doma zares prodaja: **zasebnemu najemu s pogostitvijo** (rojstnim dnevi, poslovna srečanja, poroke).',
+            body: 'Ko dnevne izlete prevzame nova stran, se ta posveti **zasebnemu najemu s pogostitvijo** (rojstnim dnevi, poslovna srečanja, poroke).',
           },
           {
             icon: 'camera',
@@ -366,7 +366,7 @@ export const parts: Record<OfferPartId, PartCopy> = {
           {
             icon: 'message',
             title: 'Povpraševanje, ne rezervacija',
-            body: 'Piknik ni izdelek s ceno na polici, ampak pogovor. Obrazec na strani ga začne in vpraša za datum, število ljudi, pogostitev in uro.',
+            body: 'Piknik ni izdelek s fiksno ceno. Obrazec na strani omogoča pripravo prilagojene ponudbe.',
           },
           /* The `splet` rule, said as a benefit in the section rather than only
              as a line in the totals. */
@@ -458,10 +458,10 @@ export const moneyFlow = {
     label: 'Čez sezono',
     /** PLACEHOLDER — tickets sold in a season. The multiplier, so it is marked. */
     tickets: 6000,
-    lead: 'Odstotek raste z vami, mesečni znesek ne. Pri 6.000 prodanih vstopnicah po 12 € gre samo iz vozovnic:',
+    lead: 'Primerjava provizije pri prodaji 6.000 vstopnic.',
     oursLabel: 'Alpaca Booking',
     theirsLabel: 'Platforme za rezervacije',
-    note: 'In to preden je plačana njihova mesečna naročnina, ki teče tako ali tako.',
+    note: 'Poleg tega platforme zaračunajo še mesečno naročnino.',
   },
   /** Heads the two rails, which are now the working behind the season figure. */
   breakdown: {
@@ -481,7 +481,7 @@ export const moneyFlow = {
  * without needing to be counted.
  */
 export const route = {
-  label: 'Pot gosta',
+  label: 'Pot obiskovalca na vaši spletni strani',
   heading: 'Od iskalnika do vkrcanja',
   steps: [
     {
@@ -492,17 +492,17 @@ export const route = {
     {
       icon: 'globe',
       title: 'Najde vašo stran',
-      body: 'Stran, ki govori o točno tem, v njegovem jeziku.',
+      body: 'Stran, ki govori o točno tem, kar išče.',
     },
     {
       icon: 'ticket',
       title: 'Rezervira',
-      body: 'Obrazec v prvem zaslonu. Termin, osebe, kartica.',
+      body: 'Obrazec v prvem zaslonu, ki poveča konverzijo.',
     },
     {
       icon: 'anchor',
       title: 'Se vkrca',
-      body: 'Ime je na seznamu, preden pride na pomol.',
+      body: 'Ime je na seznamu potnikov in rezervacija v sistemu.',
     },
   ] satisfies { icon: IconKey; title: string; body: string }[],
   today: 'Danes se ta pot konča pri prvem koraku.',
@@ -537,24 +537,24 @@ export const exhibits = {
   widget: {
     label: 'Obrazec za rezervacijo',
     heading: 'Kar vidi gost na vaši strani',
-    lead: 'Vzorec je v angleščini, ker je obrazec namenjen tujemu gostu. Sistem, ki ga vodite vi, je v slovenščini (posnetka zaslona nižje na tej strani sta iz istega računa).',
+    lead: 'Rezervacijski obrazec sistema Alpaca Booking:',
     alt: 'Rezervacijski obrazec: vrstica dni od torka 25. do ponedeljka 31. avgusta z izbranim 25., pod njo trije termini izbranega dne, od katerih je prvi razprodan.',
     callouts: [
       {
         letter: 'A',
         x: 5,
         y: 33,
-        text: 'Termini se avtomatsko črpajo iz vašega urnika. Ni drugega koledarja, ki bi ga bilo treba usklajevati.',
+        text: 'Termini se avtomatsko prenesejo iz vašega urnika.',
       },
       {
         letter: 'B',
         x: 5,
         y: 65,
-        text: 'Zasedenega termina gost ne more izbrati. Zadnji dve mesti ne moreta biti prodani dvakrat.',
+        text: 'Zasedenega termina turist ne more izbrati.',
       },
     ],
     caption:
-      'Obrazec prevzame barve, pisavo in obliko strani, na katero je vgrajen. Vgradnja sta dve vrstici kode.',
+      'Obrazec prevzame barve, pisavo in obliko strani, na katero je vgrajen.',
   },
 
   dashboard: {
@@ -566,19 +566,19 @@ export const exhibits = {
         letter: 'A',
         x: 69,
         y: 19,
-        text: 'Koliko denarja je še odprtega na današnjih ladjah, preden se vkrcajo, ne po tem.',
+        text: 'Znesek plačil ob prihodu.',
       },
       {
         letter: 'B',
         x: 85,
         y: 19,
-        text: 'Koliko rezervacij je prišlo danes in koliko od tega je sprejela vaša stran sama, brez vas.',
+        text: 'Število telefonskih in spletnih rezervacij.',
       },
       {
         letter: 'C',
         x: 63,
         y: 61,
-        text: 'Odhodi prihodnjega tedna, ki ne bodo dosegli minimuma ali so že čez zmogljivost. Dokler se še da kaj narediti.',
+        text: 'Plovbe prihodnjega tedna, ki še ne dosegajo minimalnega števila udeležencev ali pa so čez zmogljivost.',
       },
     ],
   },
@@ -592,7 +592,7 @@ export const exhibits = {
         letter: 'A',
         x: 21,
         y: 36,
-        text: 'Kdo še ni plačal in koliko dolguje, vidno takoj pri imenu, ne v drugem zvezku.',
+        text: 'Kdo še ni plačal in koliko dolguje.',
       },
       {
         letter: 'B',
@@ -602,7 +602,7 @@ export const exhibits = {
       },
     ],
     caption:
-      'Posnetek je obrezan na sam seznam. Račun za prijavo tudi v resnici ne vidi ničesar drugega: ne cen, ne nastavitev, ne ostalih rezervacij.',
+      'Posnetek zaslona, ki ga vidi posadka pred vkrcanjem.',
   },
 
   /*
@@ -631,7 +631,7 @@ export const exhibits = {
       },
     ],
     caption:
-      'Postavitev potrdite pred izdelavo, videz pa po njej. Skica ni obljuba končnega videza strani.',
+      'Postavitev potrdite pred izdelavo, izgled pa v kasnejši fazi. Skica ni dokončen videz strani.',
   },
 } as const
 
@@ -657,7 +657,7 @@ export const objections = {
     },
     {
       title: 'Uvajanje je pogovor, ne tečaj',
-      body: 'Realno: eno popoldne za izlete in sezono, deset minut, da obrazec pride na stran.',
+      body: 'V enem popoldnevu lahko nastavite celoten sistem in pričnete z uporabo.',
     },
     /*
       Two recurring fees now, and the honest answer differs between them. The
@@ -777,7 +777,7 @@ export const warranty = {
 export const team = {
   eyebrow: 'Kdo bo delal na tem',
   heading: 'Ekipa in sodelavci',
-  lead: 'Za projektom stoji ekipa strokovnjakov z različnih področij. Razvoj, uporabniška izkušnja, oblikovanje in marketing niso ločeni svetovi – pri projektu jih povezujemo, da lahko vsak problem pogledamo z več zornih kotov in poiščemo najboljšo rešitev. Vsak član ekipe prevzema odgovornost za svoje področje, skupaj pa skrbimo, da je končni rezultat izveden po najvišjih standardih.',
+  lead: 'Za projektom stoji ekipa strokovnjakov z različnih področij. Razvoj, uporabniška izkušnja, oblikovanje in marketing niso ločeni svetovi. Zato jih pri delu povezujemo, da lahko vsak problem pogledamo iz več zornih kotov in poiščemo najboljšo rešitev. Vsak član ekipe prevzema odgovornost za svoje področje, skupaj pa skrbimo, da je končni rezultat izveden po najvišjih standardih.',
   /** Column headings over the cards; see the note above. */
   buildLabel: 'Izvedba',
   adviseLabel: 'Svetovanje',
