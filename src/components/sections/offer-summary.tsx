@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { CheckIcon, LinkIcon, PlusIcon } from 'lucide-react'
 
 import { summary } from '@/content/copy'
-import { offerParts, terms, type OfferPart } from '@/content/offer'
+import { terms } from '@/content/offer'
 import { SUMMARY_ANCHOR, useOfferSelection } from '@/components/offer-selection'
 import { PartNumber } from '@/components/part-index'
 import { buttonClasses } from '@/components/ui/button'
 import { emphasize } from '@/components/ui/copy'
 import { Section, SectionHeader } from '@/components/ui/section'
 import { eur } from '@/lib/format'
-import { nudges as computeNudges, packageBrackets } from '@/lib/pricing'
+import { nudges as computeNudges, packageBrackets, type QuoteLine } from '@/lib/pricing'
 import { cn } from '@/lib/utils'
 
 /**
@@ -41,14 +41,16 @@ type Fee = {
   label: string
 }
 
-function PartPrice({ part }: { part: OfferPart }) {
+function PartPrice({ line }: { line: QuoteLine }) {
+  const { part } = line
+
   const monthly: Fee | null =
     part.monthly === null
       ? null
       : {
           key: 'monthly',
-          figure: eur(part.monthly),
-          before: null,
+          figure: eur(line.monthly),
+          before: line.monthly === line.listMonthly ? null : eur(line.listMonthly),
           /* Both fees are labelled now that both exist on every row: two lines
              reading `40 € / mes.` with nothing to tell them apart would read as
              one service billed twice. */
@@ -59,8 +61,16 @@ function PartPrice({ part }: { part: OfferPart }) {
     ? null
     : {
         key: 'oneOff',
-        figure: eur(part.oneOff),
-        before: part.listOneOff === null ? null : eur(part.listOneOff),
+        figure: eur(line.oneOff),
+        /*
+          One strikethrough, whatever moved the price. A part can be discounted
+          twice over — a standing concession on its list price and a package on
+          top — and striking each step in turn would put three figures on a row
+          that has room to be read at a glance. So the struck figure is always
+          what the part lists at and the plain one is always what it costs today,
+          which is the comparison the reader is making.
+        */
+        before: line.oneOff === line.listOneOff ? null : eur(line.listOneOff),
         label: ` ${part.oneOffLabel}`,
       }
 
@@ -207,7 +217,7 @@ function SummaryBrackets() {
  * argument they just declined without reading its name.
  */
 export function OfferSummary() {
-  const { quote, selection, isSelected, toggle, reset, shareUrl } = useOfferSelection()
+  const { quote, selection, toggle, reset, shareUrl } = useOfferSelection()
   const [copied, setCopied] = useState(false)
 
   const nudges = computeNudges(selection)
@@ -259,8 +269,8 @@ export function OfferSummary() {
         >
           <SummaryBrackets />
 
-          {offerParts.map((part, index) => {
-            const selected = isSelected(part.id)
+          {quote.lines.map((line, index) => {
+            const { part, selected } = line
 
             return (
               <button
@@ -290,7 +300,7 @@ export function OfferSummary() {
                   <span className="type-caption text-mute mt-0.5 block">{part.summary}</span>
                 </span>
 
-                <PartPrice part={part} />
+                <PartPrice line={line} />
 
                 {/*
                   The same ring as the hero cards, so that "in the offer" looks

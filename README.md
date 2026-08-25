@@ -33,7 +33,19 @@ and **115 €**/month. Work outside maintenance is `terms.hourlyRate`, currently
 
 The booking setup discount is unconditional — it is a decision about this client,
 not a reward for buying more — which is why it lives on the part as `listOneOff`
-rather than in `bundleRules`. It is shown struck through on that part's row.
+rather than in `bundleRules`.
+
+**Every discount is shown on the row it applies to**, struck through: tick `01`
+next to `02` and the landing page reads `5̶0̶0̶ ̶€̶ 400 €`, tick all three and the
+redesign reads `1̶.̶0̶0̶0̶ ̶€̶ 900 €` with its maintenance at `4̶0̶ ̶€̶ 0 €`. That is
+what `appliesTo` on each bundle rule is for — it names the part whose price the
+package moves. A discount held only as a lump sum against the total is a line in
+the panel beside three rows whose prices never change, and a reader has no reason
+to believe ticking a second box made the first one cheaper.
+
+Because of that, `appliesTo` **must be one of the rule's own `requires`**. A rule
+only applies when all of its parts are selected, so pointing it elsewhere would
+aim a live discount at a row that is switched off.
 
 ## The password
 

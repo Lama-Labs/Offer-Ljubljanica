@@ -40,18 +40,23 @@ export function Close() {
   if (!quote.isEmpty) {
     lines.push('')
 
-    for (const part of quote.parts) {
+    for (const line of quote.lines.filter((each) => each.selected)) {
+      const { part } = line
       /*
-        Both fees are labelled here for the same reason they are labelled in the
+        The prices as the reader was looking at them, packages already applied —
+        `line`, not `part`. A reply quoting list prices the page never showed is
+        a reply that has to be reconciled before it can be answered.
+
+        Both fees are labelled for the same reason they are labelled in the
         summary: this message is read next to the offer by somebody deciding
         which of two monthly charges is which, and `40 € / mesec` twice over with
         nothing to separate them is the line that gets queried on the phone.
       */
       const monthly =
         part.monthly !== null
-          ? `${eur(part.monthly)} / mesec${part.monthlyLabel ? ` — ${part.monthlyLabel}` : ''}`
+          ? `${eur(line.monthly)} / mesec${part.monthlyLabel ? ` — ${part.monthlyLabel}` : ''}`
           : null
-      const oneOff = part.oneOff ? `${eur(part.oneOff)} ${part.oneOffLabel}` : null
+      const oneOff = part.oneOff ? `${eur(line.oneOff)} ${part.oneOffLabel}` : null
 
       /* Headline fee first, the same way round as the row the reader was
          looking at when they pressed the button. */

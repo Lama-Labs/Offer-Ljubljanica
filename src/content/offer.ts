@@ -191,7 +191,29 @@ export type BundleRule = {
   /** Every part that must be selected for the rule to apply. */
   requires: readonly OfferPartId[]
   label: string
-  /** Taken off the one-off total, in EUR. */
+  /**
+   * Whose price the discount comes off.
+   *
+   * ## Why a package names a part
+   *
+   * A discount has to land somewhere the reader can see it. Held only as a lump
+   * sum against the total, it appears as a line in the panel — `Paket Zagon
+   * −100 €` — beside three rows whose prices never move, and a reader ticking
+   * the second box has no reason to believe the first one got cheaper. Naming
+   * the part lets the row show it: `500 €` struck, `400 €` charged, on the line
+   * that changed.
+   *
+   * It is also the honest answer. Every discount in this offer is a discount on
+   * something specific — the site is quicker to build alongside the booking
+   * system, the second site's maintenance is absorbed by the first — and a
+   * total is where those facts go to become unattributable.
+   *
+   * **Must be one of `requires`.** A rule can only apply when all of its parts
+   * are selected, so pointing this at a part outside that set would attribute a
+   * live discount to a row that is switched off, where nothing would draw it.
+   */
+  appliesTo: OfferPartId
+  /** Taken off that part's one-off fee, in EUR. */
   oneOffDiscount: number
   /**
    * Taken off the recurring total, in EUR per month, for as long as the offer
@@ -211,6 +233,9 @@ export const bundleRules: readonly BundleRule[] = [
     id: 'zagon',
     requires: ['booking', 'landing'],
     label: 'Paket Zagon',
+    /* The site is what gets quicker to build; the booking system is unchanged
+       by being sold alongside it. */
+    appliesTo: 'landing',
     oneOffDiscount: 100,
     monthlyDiscount: 0,
     reason:
@@ -220,6 +245,12 @@ export const bundleRules: readonly BundleRule[] = [
     id: 'splet',
     requires: ['landing', 'redesign'],
     label: 'Paket Splet',
+    /* The second site's maintenance is the one absorbed, so the redesign's row
+       is where the fee goes to nothing and the landing page keeps charging the
+       single contract. Pointing it at `landing` instead would zero the wrong
+       row and leave the reader looking at a €1.000 redesign that appears to
+       carry an extra fee the site above it does not. */
+    appliesTo: 'redesign',
     oneOffDiscount: 0,
     monthlyDiscount: 40,
     reason:
@@ -233,6 +264,7 @@ export const bundleRules: readonly BundleRule[] = [
     id: 'celota',
     requires: ['booking', 'landing', 'redesign'],
     label: 'Paket Celota',
+    appliesTo: 'redesign',
     oneOffDiscount: 100,
     monthlyDiscount: 0,
     reason:

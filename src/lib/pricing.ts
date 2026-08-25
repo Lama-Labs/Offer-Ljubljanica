@@ -10,21 +10,62 @@ import {
 export type Selection = readonly OfferPartId[]
 
 /**
+ * One part, priced against the current selection.
+ *
+ * ## Why the arithmetic is per part before it is per offer
+ *
+ * A discount the reader cannot find is a discount they do not believe. Held only
+ * as a lump sum, `Paket Zagon −100 €` sits in the totals panel beside three rows
+ * whose prices never move, and somebody who has just ticked the second box has
+ * no reason to think the first one changed. Pricing each part separately lets
+ * the row carry it: `500 €` struck through, `400 €` charged, on the line that
+ * actually got cheaper.
+ *
+ * Every figure in `Quote` is a sum of these lines, so the row and the panel are
+ * one calculation arriving twice rather than two that have to be kept in step by
+ * hand.
+ *
+ * ## Why parts that are switched off get a line too
+ *
+ * The summary draws all three rows whatever is selected, and a row that is out
+ * still has to say what it would cost. Its line is priced as if the part stood
+ * alone — no package can reach it, which is the point: the discount appears when
+ * the combination is selected and not before.
+ */
+export type QuoteLine = {
+  part: OfferPart
+  selected: boolean
+  /** What the part lists at, before a discount of either kind. */
+  listOneOff: number
+  /** Off the list price whatever else is selected — the booking setup at half. */
+  partOneOffDiscount: number
+  /** Off it again, by the packages in force. Always zero while the part is out. */
+  bundleOneOffDiscount: number
+  /** What this part actually costs now, and adds to the one-off total. */
+  oneOff: number
+  listMonthly: number
+  bundleMonthlyDiscount: number
+  monthly: number
+}
+
+/**
  * What a selection costs.
  *
- * ## Why the discounts are split in two
+ * ## Why the discounts are still counted in two groups
  *
- * They are explained in different places, so they have to be counted
- * separately. A part discount is a concession on one line item — the booking
- * setup at half price — and belongs on that part's row, next to the number it
- * halves. A rule discount is the reward for a combination and belongs in the
- * totals panel, beside the name of the package that granted it.
+ * They are explained in different places. A part discount is a concession on one
+ * line item and belongs on that part's row, next to the number it halves. A
+ * package discount is the reward for a combination, so it belongs on the row
+ * *and* in the panel, beside the name of the package that granted it — the row
+ * says which price moved, the panel says why.
  *
  * Summing them into one figure before they reach the page would leave the panel
  * showing a gap between the list total and the total that the listed packages do
  * not account for — which reads as arithmetic the reader cannot check.
  */
 export type Quote = {
+  /** Every part, in page order, priced against this selection. */
+  lines: QuoteLine[]
   parts: OfferPart[]
   /** Sum of every part's list price, before any discount at all. */
   oneOffBeforeDiscount: number
@@ -129,60 +170,83 @@ export function normalizeSelection(ids: readonly string[]): Selection {
 
 export function quote(selection: Selection): Quote {
   const selected = new Set(selection)
-  const parts = offerParts.filter((part) => selected.has(part.id))
-
-  /* The list price of a part is what it lists at when that differs, and simply
-     its price when it does not. */
-  const listOneOff = (part: OfferPart) => part.listOneOff ?? part.oneOff ?? 0
-
-  const oneOffBeforeDiscount = parts.reduce((sum, part) => sum + listOneOff(part), 0)
-  const partOneOffDiscount = parts.reduce(
-    (sum, part) => sum + (listOneOff(part) - (part.oneOff ?? 0)),
-    0,
-  )
-
-  const monthlyBeforeDiscount = parts.reduce((sum, part) => sum + (part.monthly ?? 0), 0)
 
   const appliedRules = bundleRules.filter((rule) =>
     rule.requires.every((required) => selected.has(required)),
   )
 
   /*
-    Both clamped. The rules are written against the price list they were written
-    with, and a later edit that lowers a fee below its own discount would
-    otherwise turn a total negative — an invoice that pays the client. The
-    one-off is clamped at what the part concessions have already left, so the two
-    layers cannot between them discount more than there was to discount.
-    Clamping here means editing `offer.ts` can produce a smaller saving but never
-    an impossible one.
+    Package discounts, gathered against the part each one names. Only rules in
+    force contribute, and a rule is in force only when every part it requires is
+    selected — so with `appliesTo` inside `requires`, as the type demands, a
+    discount can never be aimed at a row that is switched off.
   */
-  const ruleOneOffDiscount = Math.min(
-    appliedRules.reduce((sum, rule) => sum + rule.oneOffDiscount, 0),
-    oneOffBeforeDiscount - partOneOffDiscount,
-  )
+  const bundleOneOff = new Map<OfferPartId, number>()
+  const bundleMonthly = new Map<OfferPartId, number>()
 
-  const monthlyDiscount = Math.min(
-    appliedRules.reduce((sum, rule) => sum + rule.monthlyDiscount, 0),
-    monthlyBeforeDiscount,
-  )
+  for (const rule of appliedRules) {
+    const { appliesTo } = rule
+    bundleOneOff.set(appliesTo, (bundleOneOff.get(appliesTo) ?? 0) + rule.oneOffDiscount)
+    bundleMonthly.set(appliesTo, (bundleMonthly.get(appliesTo) ?? 0) + rule.monthlyDiscount)
+  }
 
-  const oneOffDiscount = partOneOffDiscount + ruleOneOffDiscount
-  const oneOffTotal = oneOffBeforeDiscount - oneOffDiscount
-  const monthly = monthlyBeforeDiscount - monthlyDiscount
+  const lines: QuoteLine[] = offerParts.map((part) => {
+    const isIn = selected.has(part.id)
+    const charged = part.oneOff ?? 0
+    const listOneOff = part.listOneOff ?? charged
+    const listMonthly = part.monthly ?? 0
+
+    /*
+      Clamped at what the part still costs, and withheld entirely from a part
+      that is out — the second is belt to the first's braces, so that a rule
+      pointed at something outside its own `requires` cannot print a discount on
+      a row nothing is paying for.
+
+      The rules are written against the price list they were written with, and a
+      later edit that lowers a fee below a discount aimed at it would otherwise
+      put a negative price on that row and an invoice that pays the client.
+      Clamping per line rather than per total is also what keeps the row and the
+      panel agreeing: every figure below is a sum of these lines, so editing
+      `offer.ts` can produce a smaller saving but never an incoherent one.
+    */
+    const bundleOneOffDiscount = isIn ? Math.min(bundleOneOff.get(part.id) ?? 0, charged) : 0
+    const bundleMonthlyDiscount = isIn ? Math.min(bundleMonthly.get(part.id) ?? 0, listMonthly) : 0
+
+    return {
+      part,
+      selected: isIn,
+      listOneOff,
+      partOneOffDiscount: listOneOff - charged,
+      bundleOneOffDiscount,
+      oneOff: charged - bundleOneOffDiscount,
+      listMonthly,
+      bundleMonthlyDiscount,
+      monthly: listMonthly - bundleMonthlyDiscount,
+    }
+  })
+
+  const taken = lines.filter((line) => line.selected)
+  const sum = (of: (line: QuoteLine) => number) =>
+    taken.reduce((total, line) => total + of(line), 0)
+
+  const partOneOffDiscount = sum((line) => line.partOneOffDiscount)
+  const ruleOneOffDiscount = sum((line) => line.bundleOneOffDiscount)
+  const monthlyDiscount = sum((line) => line.bundleMonthlyDiscount)
 
   return {
-    parts,
-    oneOffBeforeDiscount,
+    lines,
+    parts: taken.map((line) => line.part),
+    oneOffBeforeDiscount: sum((line) => line.listOneOff),
     partOneOffDiscount,
     ruleOneOffDiscount,
-    oneOffDiscount,
-    oneOffTotal,
-    monthlyBeforeDiscount,
+    oneOffDiscount: partOneOffDiscount + ruleOneOffDiscount,
+    oneOffTotal: sum((line) => line.oneOff),
+    monthlyBeforeDiscount: sum((line) => line.listMonthly),
     monthlyDiscount,
-    monthly,
+    monthly: sum((line) => line.monthly),
     appliedRules,
-    savings: oneOffDiscount + monthlyDiscount * 12,
-    isEmpty: parts.length === 0,
+    savings: partOneOffDiscount + ruleOneOffDiscount + monthlyDiscount * 12,
+    isEmpty: taken.length === 0,
   }
 }
 
