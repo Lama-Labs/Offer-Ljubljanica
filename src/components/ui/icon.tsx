@@ -72,21 +72,33 @@ export function Icon({ name, className }: { name: IconKey; className?: string })
  * Without it the marks are different widths and the titles start at different
  * places, which is what makes an icon list look assembled rather than set.
  *
- * `{signal-wash}` behind `{signal}`, not the accent at full strength behind
- * white: nine of these in a section, each a solid red square, would out-shout
- * the totals panel the whole page is walking towards. The wash is the accent
- * with the volume down — the mark still reads as red, and the stroke sits on it
- * at 5.6:1.
+ * `{accent-wash}` behind `{accent}`, not the accent at full strength behind
+ * white: nine of these in a section, each a solid square, would out-shout the
+ * totals panel the whole page is walking towards. The wash is the accent with
+ * the volume down — the mark still reads in colour, and the stroke sits on it
+ * at 4.9:1.
+ *
+ * Which colour is not this component's business. `accent` is whatever part the
+ * tile is standing in, so a feature list inside `01` comes out teal and the
+ * same markup inside `03` comes out purple, with nothing passed down.
  */
-export function IconTile({ name, className }: { name: IconKey; className?: string }) {
+export function IconTile({
+  name,
+  className,
+  iconClassName,
+}: {
+  name: IconKey
+  className?: string
+  iconClassName?: string
+}) {
   return (
     <span
       className={cn(
-        'bg-signal-wash text-signal flex size-9 shrink-0 items-center justify-center rounded-md',
+        'bg-accent-wash text-accent flex size-9 shrink-0 items-center justify-center rounded-md',
         className,
       )}
     >
-      <Icon name={name} />
+      <Icon name={name} className={iconClassName} />
     </span>
   )
 }

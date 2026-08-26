@@ -1,4 +1,5 @@
 import { route } from '@/content/copy'
+import { GraphicSection } from '@/components/sections/graphic-section'
 import { IconTile } from '@/components/ui/icon'
 import { cn } from '@/lib/utils'
 
@@ -78,16 +79,8 @@ function Squiggle({
 
 export function GuestRoute() {
   return (
-    <figure className="mt-14">
-      <figcaption>
-        <p className="label-mono text-faint flex items-center gap-2.5">
-          <span className="bg-hairline-strong inline-block h-px w-6" aria-hidden />
-          {route.label}
-        </p>
-        <p className="type-subtitle text-ink mt-3">{route.heading}</p>
-      </figcaption>
-
-      <div className="relative mt-6">
+    <GraphicSection part="landing" heading={route.heading}>
+      <div className="relative">
         {/*
           A 2rem gutter between the columns, which the connector then bridges
           with a negative margin. The rail used to run column-to-column with no
@@ -100,7 +93,7 @@ export function GuestRoute() {
               <div className="flex items-center gap-3">
                 <IconTile name={step.icon} />
                 {index < route.steps.length - 1 ? (
-                  <span className="bg-hairline hidden h-px flex-1 sm:-mr-8 sm:block" aria-hidden />
+                  <span className="bg-hairline-strong hidden h-px flex-1 sm:-mr-8 sm:block" aria-hidden />
                 ) : null}
               </div>
 
@@ -135,7 +128,7 @@ export function GuestRoute() {
         </span>
       </div>
 
-      <p className="type-caption text-mute border-hairline mt-6 flex items-center gap-2.5 border-t pt-4">
+      <p className="type-caption text-mute border-hairline-strong mt-6 flex items-center gap-2.5 border-t pt-4">
         {/* The same mark at legend size, so the sentence is visibly about the
             line above rather than a general remark. */}
         <span className="text-faint inline-block h-2.5 w-4 shrink-0">
@@ -143,6 +136,6 @@ export function GuestRoute() {
         </span>
         {route.today}
       </p>
-    </figure>
+    </GraphicSection>
   )
 }

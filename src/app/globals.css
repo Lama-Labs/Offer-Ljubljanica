@@ -15,9 +15,9 @@
  *
  * `{signal}` is the page's only accent and it carries **state** and **marks**.
  *
- * *State* is always a fill: a filled selection circle, a red index numeral, the
- * bracket under the two parts we are pushing for, the totals panel. That is what
- * lets a reader tell from any screenful what they have switched on.
+ * *State* is always a fill: a filled selection circle and a coloured index
+ * numeral. That is what lets a reader tell from any screenful what they have
+ * switched on.
  *
  * *Marks* are always a stroke: every feature icon, drawn in `{signal}` on
  * `{signal-wash}` where it sits in a tile. They say *which thing this is*, never
@@ -73,6 +73,51 @@
   --color-on-signal: #ffffff;
 
   /*
+    Savings. The page's second accent, and the only green on it.
+
+    It says one thing — *this is money you are not spending* — and it is allowed
+    only where that is literally the subject: the chip beside a struck-through
+    total in the summary panel, the Alpaca column of the money comparison, where
+    the whole column is the money not spent, and the ticks in the fine print's
+    `Vključeno v ceno`, which is the same statement itemised — nine things
+    already inside the figure the reader has just read, none of them billed
+    again. A second accent survives only by never competing with the first, so
+    nothing that is merely good news is allowed to borrow it. Green is not a
+    heading, not a button, and never a mark on something that costs extra.
+
+    `{savings-tint}` is the column surface — barely tinted, because it covers a
+    tall block and the figures on it are `{ink}` and `{savings}` rather than
+    white. `{savings-wash}` stays the small-object strength.
+
+    5.4:1 on `{paper}`, 5.2:1 on `{savings-tint}`, 4.7:1 on its own wash.
+  */
+  --color-savings: #17794a;
+  --color-savings-wash: #e3f3e9;
+  --color-savings-tint: #f1f9f4;
+
+  /*
+    The three part hues. Each is the identity of one part and nothing else — see
+    the note on `--accent` below for how they are applied.
+
+    They are matched to the red rather than picked for prettiness: all four sit
+    between 5.7:1 and 5.9:1 on `{paper}` and near 4.9:1 on their own wash, so a
+    section does not get louder or quieter depending on which part it is about.
+  */
+  --color-part-booking: #00736a;
+  --color-part-booking-wash: #ddf0ed;
+  --color-part-booking-tint: #f0f8f7;
+
+  --color-part-landing: #1a5fd0;
+  --color-part-landing-wash: #e4ecfb;
+  --color-part-landing-tint: #f1f5fd;
+
+  --color-part-redesign: #7c3fd9;
+  --color-part-redesign-wash: #efe6fb;
+  --color-part-redesign-tint: #f7f2fd;
+
+  --color-on-accent: #ffffff;
+
+  /*
     A tighter radius scale than the reference system's 8/12/20/28. Large radii
     read as consumer-app friendly; this document is asking to be trusted with
     somebody's season, and precision is the more useful impression.
@@ -93,12 +138,87 @@
   --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
 }
 
+/**
+ * The accent, which is whichever part you are standing in.
+ *
+ * `--accent` is a single variable, set to the red at the root and overridden by
+ * `data-part` on the hero card, the section, the summary row and the rail stop
+ * that belong to a part. Everything under one of those scopes — the icon tiles
+ * in a feature list, the exhibit chips, the numeral, the selected border —
+ * asks for `accent` and gets that part's hue without being told which part it
+ * is in. Outside a part, `accent` is the red, so the totals panel and the
+ * unlock screen are untouched.
+ *
+ * It is a raw custom property rather than a theme colour because a theme colour
+ * resolves its `var()` once, at `:root`, and would never see the override.
+ *
+ * ## What the hues mean
+ *
+ * The same thing the red meant, three times over: *this is part 01*. Teal is
+ * the booking system, blue is the tourist site, purple is the redesign, and a
+ * reader who has met the three cards can tell from any icon tile on the page
+ * which of the three they are reading about.
+ *
+ * What red keeps is *in the offer*. Outside a part scope it is still the red,
+ * so the totals panel and the unlock screen are untouched; inside one it is
+ * that part's hue, and the summary row's selection circle turns teal, blue or
+ * purple according to which row it sits on.
+ *
+ * ## Why the totals panel is no longer red
+ *
+ * It was the page's one saturated surface, on the argument that the panel *is*
+ * the offer and red meant money. It read as a warning. A block of `{signal}`
+ * the size of a postcard is the loudest thing on a quiet page, and it was
+ * shouting at the reader precisely when they were doing arithmetic.
+ *
+ * So the panel is `{paper}` inside a hairline like every other card, its figures
+ * are `{ink}`, and the only colour in it is the savings chip. Red survives in
+ * the panel as the fill of the one button, where it is a control rather than a
+ * surface.
+ */
 @layer base {
+  :root {
+    --accent: var(--color-signal);
+    --accent-wash: var(--color-signal-wash);
+    --accent-tint: var(--color-signal-tint);
+  }
+
+  [data-part='booking'] {
+    --accent: var(--color-part-booking);
+    --accent-wash: var(--color-part-booking-wash);
+    --accent-tint: var(--color-part-booking-tint);
+  }
+
+  [data-part='landing'] {
+    --accent: var(--color-part-landing);
+    --accent-wash: var(--color-part-landing-wash);
+    --accent-tint: var(--color-part-landing-tint);
+  }
+
+  [data-part='redesign'] {
+    --accent: var(--color-part-redesign);
+    --accent-wash: var(--color-part-redesign-wash);
+    --accent-tint: var(--color-part-redesign-tint);
+  }
+
   html {
     scroll-behavior: smooth;
-    /* Breathing room above a section a link has jumped to. Nothing floats over
-       the page now, so this is margin rather than clearance. */
+    /* Breathing room above a section a link has jumped to. Below `lg` nothing
+       floats over the page, so this is margin rather than clearance. */
     scroll-padding-top: 2rem;
+  }
+
+  /*
+    From `lg` the index bar appears and sticks, so the same 2rem of margin now
+    has 3.5rem of bar sitting in it — a link to `#booking` would land the
+    heading behind it. `part-rail.tsx` sets that height as `h-14`; the two are
+    the one pair of numbers on this page that have to agree, and there is no way
+    to read a Tailwind class from here.
+  */
+  @media (min-width: 64rem) {
+    html {
+      scroll-padding-top: 5.5rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -124,6 +244,45 @@
     outline: 2px solid var(--color-signal);
     outline-offset: 2px;
   }
+}
+
+/*
+  The accent utilities. Hand-written rather than generated, for the reason given
+  above: they have to read `--accent` at the element, not at the root.
+*/
+@utility text-accent {
+  color: var(--accent);
+}
+
+@utility bg-accent {
+  background-color: var(--accent);
+}
+
+@utility bg-accent-wash {
+  background-color: var(--accent-wash);
+}
+
+@utility bg-accent-tint {
+  background-color: var(--accent-tint);
+}
+
+@utility border-accent {
+  border-color: var(--accent);
+}
+
+/** The accent as a border you can see through — a selected card, a live stop. */
+@utility border-accent-soft {
+  border-color: color-mix(in oklab, var(--accent) 45%, transparent);
+}
+
+/**
+ * The same reduction applied to a stroke: the hero's problem-to-part arrow, and
+ * anything else that has to be drawn in a part's hue without claiming the
+ * weight the hue carries on a mark. Matched to `border-accent-soft` on purpose —
+ * an arrow into a selected card should read at the card's own border strength.
+ */
+@utility text-accent-soft {
+  color: color-mix(in oklab, var(--accent) 45%, transparent);
 }
 
 /**
@@ -152,6 +311,42 @@
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: -0.018em;
+}
+
+/**
+ * A subsection's own heading: an exhibit's, a feature group's title.
+ *
+ * It shares nothing with `type-subtitle` but the family, and the two were the
+ * same size until they were not. A subtitle sits *under* something larger and
+ * completes it — the part's commercial framing under its kicker, the guarantee's
+ * one sentence under its label. A subhead *opens* something: it is the largest
+ * line in its block, and where the group titles have been dropped it is the only
+ * line in the block that is a heading at all.
+ *
+ * At 20px it was doing the second job in the first job's clothes: a screenshot
+ * and nine feature lines opened at the same size as a caption sitting under a
+ * bigger line somewhere else. 24px is the size at which the eye scanning a part
+ * section finds the three screens without reading anything.
+ *
+ * ## Why 24px does not collide with `type-title`
+ *
+ * `type-title` clamps down to 1.5rem on a narrow screen, which is exactly this.
+ * They never meet: subheads live only inside `OfferPartSection`, whose own
+ * header is `type-display`, and every section that opens at `type-title` — the
+ * price panel, the warranty, the two drawings — contains no subhead at all. The
+ * two are only ever compared across a scroll, where 700 against 600 and the
+ * tighter tracking are the difference.
+ *
+ * Raising the title's floor to keep a gap that nothing can see would have made
+ * every section heading on a phone larger, which is the trade the whole scale
+ * was tuned to avoid.
+ */
+@utility type-subhead {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.016em;
 }
 
 @utility type-subtitle {

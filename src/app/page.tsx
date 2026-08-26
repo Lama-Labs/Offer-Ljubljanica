@@ -1,52 +1,74 @@
-import { exhibits, proposal } from '@/content/copy'
+import { exhibits } from '@/content/copy'
 import { OfferSelectionProvider } from '@/components/offer-selection'
+import { PartRail } from '@/components/part-rail'
 import { MoneyFlow } from '@/components/graphics/money-flow'
 import { GuestRoute } from '@/components/graphics/route'
 import { Close } from '@/components/sections/close'
-import { Diagnosis } from '@/components/sections/diagnosis'
+import { FinePrint } from '@/components/sections/fine-print'
 import { Hero } from '@/components/sections/hero'
-import { Objections } from '@/components/sections/objections'
 import { OfferPartSection } from '@/components/sections/offer-part'
 import { OfferSummary } from '@/components/sections/offer-summary'
 import { PageFooter } from '@/components/sections/page-footer'
-import { Takeaways } from '@/components/sections/takeaways'
 import { Team } from '@/components/sections/team'
-import { Warranty } from '@/components/sections/warranty'
 import { Exhibit } from '@/components/ui/exhibit'
-import { Section, SectionHeader } from '@/components/ui/section'
 
 /**
  * The proposal, in the order the argument has to be made.
  *
  * ## The argument
  *
- * The hero shows the whole offer — three parts, three prices, and the bracket
- * saying which two go together — so that nobody has to read eleven sections to
- * find out what is being proposed. Everything below justifies that card.
+ * The hero is both halves of the opening argument now: three problems, and
+ * directly under each one the part of the offer that answers it. Diagnosis
+ * before proposal still holds — nobody buys a solution to a problem they have
+ * not agreed they have — it just happens in one screenful instead of across two
+ * sections, and every problem arrives already attached to its answer rather than
+ * in a pile the reader has to sort through afterwards.
  *
- * Then: diagnosis before proposal, because nobody buys a solution to a problem
- * they have not agreed they have. The two necessary parts before the optional
- * one, so the optional one reads as an extra rather than as the third of three
- * things being asked for. The summary after all three, because it is the only
- * point at which the reader can compare them. And the cost of adopting after the
- * price, because "what does this cost me" is the question the price provokes
- * rather than the one it answers.
+ * That is what `Zakaj izboljšati sistem` and `Kaj vidimo od zunaj` used to do
+ * between them, over nine observations. Three of those survive, one per part;
+ * the rest were symptoms of the same three causes, and a symptom the offer does
+ * not separately answer buys an agreement the page then has no use for.
+ *
+ * Everything below justifies those three cards. The two necessary parts before
+ * the optional one, so the optional one reads as an extra rather than as the
+ * third of three things being asked for. The summary after all three, because it
+ * is the only point at which the reader can compare them. And the cost of
+ * adopting after the price, because "what does this cost me" is the question the
+ * price provokes rather than the one it answers.
  *
  * ## The rhythm
  *
- * There is no band alternation any more — no black, no slam. Sections sit on
- * `paper` and step to `mist` only where two would otherwise run together, which
- * is roughly every second one. The page reads as a document rather than as a
- * sequence of slides, which is what it is.
+ * There is no black and no slam, and the alternation is no longer arithmetic.
+ * The two grounds sort the page into two kinds of thing: `paper` is the offer —
+ * the hero and the three parts, the sections a reader is deciding about — and
+ * `mist` is what argues about the offer without being part of it. That is the
+ * two drawings and the price panel.
+ *
+ * There were two bands after the price — the guarantee with the scope, and the
+ * objections — and they are one shut drawer inside the price panel's own band
+ * now. Both were read by the same person at the same moment, somebody checking
+ * a figure they had just been shown, and neither was read by anybody who had
+ * not seen it. See `fine-print.tsx` for what that costs and why it is worth it.
+ *
+ * The three parts therefore run white, white, white, each opening with the same
+ * letterhead, which is what makes them read as one comparable set. Under the old
+ * rule `02` was grey for no reason except that it came second, and a reader
+ * comparing three offers was quietly told the middle one was a different sort of
+ * object.
  *
  * ## Where the graphics go
  *
  * One per part, at most, and each carries the claim that part cannot afford to
- * leave as a sentence: the money rails under `01` because *no commission, money
- * direct to you* is the entire pitch, and the guest's route under `02` because
- * the whole case for a second website is that today's path breaks at the first
- * step. `03` gets none — it is the optional part, and giving it a diagram would
- * argue for it harder than the offer does.
+ * leave as a sentence: the money rails for `01` because *no commission, money
+ * direct to you* is the entire pitch, and the guest's route for `02` because the
+ * whole case for a second website is that today's path breaks at the first step.
+ * `03` gets none — it is the optional part, and giving it a diagram would argue
+ * for it harder than the offer does.
+ *
+ * Both used to be `children` of the section they belong to, which put each of
+ * them eleventh in its own part, under nine feature lines and up to three
+ * screenshots. They are their own bands now, directly after the part they
+ * argue for, in that part's hue — see `GraphicSection`.
  *
  * `01` used to carry a second one: the two lines of HTML, printed verbatim as
  * evidence for "namestitev sta dve vrstici". It was evidence for a reader who
@@ -57,22 +79,14 @@ import { Section, SectionHeader } from '@/components/ui/section'
 export default function ProposalPage() {
   return (
     <OfferSelectionProvider>
+      {/* Outside `main`, and first: it is a landmark for the whole document
+          rather than part of its content, and a reader tabbing in should reach
+          the index before the argument. */}
+      <PartRail />
+
       <Hero />
 
       <main>
-        <Takeaways />
-
-        <Diagnosis />
-
-        <Section tone="mist" size="tight">
-          <SectionHeader
-            eyebrow={proposal.eyebrow}
-            heading={proposal.heading}
-            lead={proposal.lead}
-            size="display"
-          />
-        </Section>
-
         <OfferPartSection
           id="booking"
           exhibits={{
@@ -114,13 +128,12 @@ export default function ProposalPage() {
               />
             ),
           }}
-        >
-          <MoneyFlow />
-        </OfferPartSection>
+        />
+
+        <MoneyFlow />
 
         <OfferPartSection
           id="landing"
-          tone="mist"
           exhibits={{
             /* The one provisional figure on the page: dashed mount, and a
                caption that says in words what the dashes say in the margin. */
@@ -133,21 +146,18 @@ export default function ProposalPage() {
                 aspect="936/730"
                 anchor="top"
                 provisional
-                on="mist"
               />
             ),
           }}
-        >
-          <GuestRoute />
-        </OfferPartSection>
+        />
+
+        <GuestRoute />
 
         <OfferPartSection id="redesign" />
 
-        <OfferSummary />
-
-        <Warranty />
-
-        <Objections />
+        <OfferSummary>
+          <FinePrint />
+        </OfferSummary>
 
         <Team />
 

@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { CheckIcon, LinkIcon, PlusIcon } from 'lucide-react'
+import { type ReactNode } from 'react'
 
 import { summary } from '@/content/copy'
 import { terms } from '@/content/offer'
-import { SUMMARY_ANCHOR, useOfferSelection } from '@/components/offer-selection'
-import { PartNumber } from '@/components/part-index'
+import { useOfferSelection } from '@/components/offer-selection'
+import { ContactActions } from '@/components/contact-actions'
+import { SUMMARY_ANCHOR } from '@/lib/anchors'
+import { OfferDot, PartMark } from '@/components/part-index'
 import { buttonClasses } from '@/components/ui/button'
-import { emphasize } from '@/components/ui/copy'
 import { Section, SectionHeader } from '@/components/ui/section'
 import { eur } from '@/lib/format'
-import { nudges as computeNudges, packageBrackets, type QuoteLine } from '@/lib/pricing'
+import { type QuoteLine } from '@/lib/pricing'
 import { cn } from '@/lib/utils'
 
 /**
@@ -64,8 +64,8 @@ function PartPrice({ line }: { line: QuoteLine }) {
         figure: eur(line.oneOff),
         /*
           One strikethrough, whatever moved the price. A part can be discounted
-          twice over — a standing concession on its list price and a package on
-          top — and striking each step in turn would put three figures on a row
+          twice over — a standing concession on its list price and a bundle rule
+          on top — and striking each step in turn would put three figures on a row
           that has room to be read at a glance. So the struck figure is always
           what the part lists at and the plain one is always what it costs today,
           which is the comparison the reader is making.
@@ -85,6 +85,9 @@ function PartPrice({ line }: { line: QuoteLine }) {
           key={fee.key}
           className={cn('block', index === 0 ? 'num-md text-ink' : 'num-sm text-mute')}
         >
+          {/* `+` on the second fee, so two figures on one row read as one
+              price with two parts rather than as a choice between them. */}
+          {index > 0 ? '+ ' : null}
           {/* The concession, on the line it applies to. Struck and one step
               fainter, so the figure actually charged stays the one being read. */}
           {fee.before ? (
@@ -101,106 +104,53 @@ function PartPrice({ line }: { line: QuoteLine }) {
   )
 }
 
-/** Lanes the brackets occupy to the left of the rows. Zero when there are none. */
-const LANES = packageBrackets.length
-
 /**
- * The packages again, beside the summary rows — the hero's brackets turned a
- * quarter turn.
+ * What the offer takes off one total, summed, above the figure it comes off.
  *
- * ## Why they are repeated here at all
+ * ## Why one figure and not a list
  *
- * The hero shows the ways of combining before the reader has read a word of
- * argument; this shows them at the moment they are actually choosing, which is a
- * different moment and the more decisive one. Without them the summary is three
- * independent switches and a total, and the reason the second row makes the
- * first cheaper lives only in a sentence under the panel.
+ * Every discount landing on the monthly bill is one number to the reader, and
+ * every discount landing on the one-off is another. Which rule granted which
+ * share of it is a question the panel used to answer in five rows, and answering
+ * it cost more attention than the answer was worth. The rows below still show
+ * the concessions where they land — struck list price beside charged price, on
+ * the line that moved — so the attribution survives one column to the left.
  *
- * ## Why vertical
+ * ## Why green
  *
- * A bracket has to run along the things it covers. In the hero those are three
- * cards in a row, so the rule is horizontal and sits under them; here they are
- * three rows in a stack, so it is vertical and sits beside them — the same
- * notation, the same `packageBrackets` geometry, read the other way. Each opens
- * rightwards, towards the rows it claims, exactly as the hero's open upwards
- * towards the cards.
+ * Because the figure directly under it is the opposite sign and two centimetres
+ * away. `−250 €` in the same ink as `550 €` is a number the reader has to parse
+ * before they know whether it is being added or taken off; in green they know
+ * before they read it. It is the only green on the page and it means one thing.
  *
- * ## The lanes
- *
- * One column per package, narrowest nearest the rows, so a package that contains
- * another sits outside it and the nesting is legible without reading a label.
- * The columns are `auto`, and the brackets are the only things in them — so
- * below `sm`, where they are hidden, the lanes collapse to nothing and the rows
- * take the full width. That is also why the horizontal gap is a margin on each
- * bracket rather than a `gap-x` on the grid: a gap survives its column being
- * empty, and would leave the rows indented by a notation that is not there.
+ * Renders nothing when there is no saving, so both totals can call it without
+ * guarding their own case.
  */
-function SummaryBrackets() {
-  const { isSelected } = useOfferSelection()
+function Saving({ off, per = '' }: { off: number; per?: string }) {
+  if (off <= 0) return null
 
   return (
-    <>
-      {packageBrackets.map(({ rule, start, span }, index) => {
-        const active = rule.requires.every((id) => isSelected(id))
-
-        return (
-          <div
-            key={rule.id}
-            /*
-              Column and row come from the price file, so they are set inline for
-              the same reason the hero's are: Tailwind cannot generate a class
-              for a span it has never seen. `LANES - index` puts the narrowest
-              package — first in `packageBrackets` — in the lane closest to the
-              rows.
-            */
-            style={{
-              gridColumn: LANES - index,
-              gridRow: `${start} / span ${span}`,
-            }}
-            className="mr-2 hidden sm:flex"
-          >
-            <p
-              className={cn(
-                /*
-                  Bottom-to-top, the way a chart labels its vertical axis.
-                  `vertical-rl` alone would set it top-to-bottom with the letters
-                  turned the other way; the half turn is what makes it read
-                  naturally with the head tilted left.
-                */
-                'label-mono self-center rotate-180 whitespace-nowrap [writing-mode:vertical-rl]',
-                'transition-colors duration-150',
-                active ? 'text-signal' : 'text-mute',
-              )}
-            >
-              {rule.label}
-            </p>
-
-            {/* The bracket proper: top, bottom and left edges, open towards the
-                rows. The hero's is the same three edges rotated. */}
-            <div
-              className={cn(
-                'ml-1.5 w-3 rounded-l-md border-y border-l transition-colors duration-150',
-                active ? 'border-signal/45' : 'border-hairline-strong',
-              )}
-              aria-hidden
-            />
-          </div>
-        )
-      })}
-    </>
+    <span className="num-sm text-savings mb-1.5 block">
+      {/* Two characters and a number; what it is goes unsaid on screen and has
+          to be said to a reader who is hearing the page. */}
+      <span className="sr-only">{summary.discountLabel}: </span>−{eur(off)}
+      {per}
+    </span>
   )
 }
-
 /**
- * The offer as the reader has built it — the page's one saturated surface.
+ * The offer as the reader has built it — three switchable rows and what they
+ * come to.
  *
- * ## Why the totals panel is red and nothing else is
+ * ## Why the panel is quiet
  *
- * Red on this page means *in your offer*. This panel is the offer: it is the
- * only place where the three parts stop being arguments and become one number.
- * Filling it is the accent's largest and last use, and it is why every other
- * red on the page is a hairline or a numeral — a page with three red blocks has
- * no red block.
+ * It was the page's one saturated surface: a postcard of `signal` with white
+ * figures on it, on the argument that the panel *is* the offer and red meant
+ * money. It read as a warning. A block that loud is the last thing a reader
+ * needs at the moment they are doing arithmetic, so the panel is paper inside a
+ * hairline like every other card, its figures are ink, and the only colour in it
+ * is the green on what the offer takes off. Red survives as the fill of the one
+ * button, where it is a control rather than a surface.
  *
  * ## Why every part is switchable here too
  *
@@ -216,69 +166,28 @@ function SummaryBrackets() {
  * is the reason the index exists: a reader who unticks `02` knows exactly which
  * argument they just declined without reading its name.
  */
-export function OfferSummary() {
-  const { quote, selection, toggle, reset, shareUrl } = useOfferSelection()
-  const [copied, setCopied] = useState(false)
-
-  const nudges = computeNudges(selection)
-
-  const share = async () => {
-    if (!shareUrl) return
-
-    try {
-      await navigator.clipboard.writeText(shareUrl)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 2500)
-    } catch {
-      /*
-        Clipboard access is refused often enough — an insecure origin, a
-        locked-down browser, a permission the reader declined — that failing
-        loudly would be worse than not offering it. The URL is in the address bar
-        either way, which is where somebody who wanted to copy it will go.
-      */
-      setCopied(false)
-    }
-  }
+export function OfferSummary({ children }: { children?: ReactNode }) {
+  const { quote, toggle, reset } = useOfferSelection()
 
   return (
     <Section id={SUMMARY_ANCHOR} tone="mist">
       <SectionHeader
-        eyebrow={summary.eyebrow}
         heading={quote.isEmpty ? summary.emptyHeading : summary.heading}
         lead={quote.isEmpty ? summary.emptyBody : summary.lead}
       />
 
       <div className="mt-10 grid items-start gap-4 lg:grid-cols-[1fr_380px]">
-        {/*
-          The whole left column is one grid: the package lanes, the three rows,
-          and everything that follows them.
-
-          The lanes and the rows share it so that a bracket spanning two rows
-          really is as tall as those two rows — including the gap between them —
-          however the text inside has wrapped. The nudge and the package notes
-          are in it for a plainer reason: they sit in the same content column as
-          the rows, so their left edge lines up with the rows rather than with
-          the outer edge of a notation they are not part of.
-        */}
-        <div
-          className="grid gap-y-3"
-          style={{
-            gridTemplateColumns:
-              LANES > 0 ? `repeat(${LANES}, auto) minmax(0, 1fr)` : 'minmax(0, 1fr)',
-          }}
-        >
-          <SummaryBrackets />
-
-          {quote.lines.map((line, index) => {
+        <div className="grid gap-y-3">
+          {quote.lines.map((line) => {
             const { part, selected } = line
 
             return (
               <button
                 key={part.id}
                 type="button"
+                data-part={part.id}
                 onClick={() => toggle(part.id)}
                 aria-pressed={selected}
-                style={{ gridColumn: LANES + 1, gridRow: index + 1 }}
                 className={cn(
                   /*
                     Wrapping, not truncating. `PartPrice` keeps each figure
@@ -286,14 +195,43 @@ export function OfferSummary() {
                     any layout it could save — so at phone width the whole price
                     block drops onto its own line rather than pushing the row
                     wider than the screen and cutting the euro signs off.
+
+                    In the offer is a filled card; out of it is an outline. That
+                    is the same statement the selection circle makes, at the size
+                    of the whole row — a reader glancing at the column sees which
+                    parts they have taken without reading a word, and the ones
+                    they have declined stay legible instead of greying out.
+
+                    The border is always drawn and merely turns transparent when
+                    the row is filled, so nothing shifts by a pixel as the reader
+                    toggles rows on and off.
+
+                    Hover previews the other state. An outlined row fills white;
+                    a filled row half-empties towards the outline, so the reader
+                    can see what dropping this part would do before they do it.
+
+                    Half rather than all the way: at full transparency the card
+                    was a transparent box inside a transparent border, and it did
+                    not fade so much as vanish. Fifty per cent keeps it on the
+                    page while making it plainly the weaker of the two states.
                   */
-                  'flex w-full flex-wrap items-center gap-x-4 gap-y-3 rounded-lg border p-4 text-left transition-colors duration-150 sm:flex-nowrap sm:p-5',
+                  'flex w-full cursor-pointer flex-wrap items-center gap-x-4 gap-y-3 rounded-xl border p-4 text-left',
+                  'transition-colors duration-150 sm:flex-nowrap sm:p-5',
                   selected
-                    ? 'border-signal/45 bg-paper'
-                    : 'border-hairline bg-paper/60 hover:border-hairline-strong',
+                    ? 'bg-paper border-transparent hover:bg-paper/70 hover:border-accent-soft'
+                    : 'border-accent-soft bg-transparent hover:bg-paper',
                 )}
               >
-                <PartNumber number={part.number} active={selected} />
+                {/* The same mark the switch at the foot of each part's
+                    section carries, leading the row rather than closing it: a
+                    reader scanning the left edge reads all three states without
+                    their eye leaving the column. */}
+                <OfferDot selected={selected} />
+
+                {/* The part's letterhead — the same tile and numeral that head
+                    its card and its section, so the row is recognisably the
+                    same object rather than a line item that shares its name. */}
+                <PartMark part={part} layout="stacked" />
 
                 <span className="min-w-[9rem] flex-1">
                   <span className="type-item text-ink block">{part.name}</span>
@@ -301,192 +239,85 @@ export function OfferSummary() {
                 </span>
 
                 <PartPrice line={line} />
-
-                {/*
-                  The same ring as the hero cards, so that "in the offer" looks
-                  identical wherever the reader meets it. A span rather than the
-                  `SelectCircle` button, because the whole row is already the
-                  control and a button inside a button is not markup a browser
-                  will keep.
-                */}
-                <span
-                  className={cn(
-                    'flex size-7 shrink-0 items-center justify-center rounded-full border transition-colors duration-150',
-                    selected
-                      ? 'border-signal bg-signal text-on-signal'
-                      : 'border-hairline-strong text-transparent',
-                  )}
-                  aria-hidden
-                >
-                  <CheckIcon className="size-4" strokeWidth={2.5} />
-                </span>
               </button>
             )
           })}
 
           {quote.isEmpty ? (
-            <button
-              type="button"
-              onClick={reset}
-              style={{ gridColumn: LANES + 1 }}
-              className={buttonClasses('primary', 'w-full')}
-            >
+            <button type="button" onClick={reset} className={buttonClasses('primary', 'w-full')}>
               {summary.restore}
             </button>
           ) : null}
-
-          {nudges.map(({ part, rules, oneOffDiscount, monthlyDiscount }) => (
-            <div
-              key={part.id}
-              style={{ gridColumn: LANES + 1 }}
-              className="border-signal/40 bg-signal-tint rounded-lg border border-dashed p-4 sm:p-5"
-            >
-              {/* Every package this one part would unlock, on one line. Two
-                  prompts asking for the same part would be the page haggling. */}
-              <p className="label-mono text-signal">
-                {rules.map((rule) => rule.label).join(' + ')}
-              </p>
-              <p className="type-body-sm text-ink mt-2">
-                Dodajte še <strong className="font-semibold">{part.name}</strong> in{' '}
-                {/*
-                  Composed from whichever kinds of saving are actually on offer
-                  rather than assuming a one-off one. The shared maintenance fee
-                  lowers only the monthly bill, and would otherwise nudge the
-                  reader with "in odpade 0 €".
-                */}
-                {[
-                  oneOffDiscount > 0 ? `odpade ${eur(oneOffDiscount)}` : null,
-                  monthlyDiscount > 0 ? `mesečno odpade ${eur(monthlyDiscount)}` : null,
-                ]
-                  .filter(Boolean)
-                  .join(' ter ')}
-                .
-              </p>
-              <button
-                type="button"
-                onClick={() => toggle(part.id)}
-                className="label-btn text-signal mt-3 inline-flex items-center gap-1.5 underline underline-offset-4"
-              >
-                <PlusIcon className="size-4" strokeWidth={2} aria-hidden />
-                Dodaj {part.name}
-              </button>
-            </div>
-          ))}
-
-          {quote.appliedRules.length > 0 ? (
-            <div
-              style={{ gridColumn: LANES + 1 }}
-              className="border-hairline space-y-3 border-t pt-5"
-            >
-              {quote.appliedRules.map((rule) => (
-                <p key={rule.id} className="type-body-sm text-mute">
-                  <span className="text-ink font-semibold">{rule.label}. </span>
-                  {emphasize(rule.reason)}
-                </p>
-              ))}
-            </div>
-          ) : null}
         </div>
 
-        {/* The offer, as one number. The page's only filled accent surface. */}
-        <div className="bg-signal text-on-signal rounded-lg p-6 sm:p-7">
-          <dl className="space-y-4">
-            {quote.oneOffDiscount > 0 ? (
-              <div className="type-caption text-on-signal/70 flex items-baseline justify-between gap-4">
-                <dt>{summary.beforeDiscountLabel}</dt>
-                <dd className="num-sm line-through">{eur(quote.oneOffBeforeDiscount)}</dd>
-              </div>
-            ) : null}
-
+        {/* The offer, as the two things it will cost. */}
+        <div className="border-hairline bg-paper rounded-xl border p-6 sm:p-7">
+          <dl>
             {/*
-              The part concessions, before the packages. They are not a reward
-              for a combination, so they carry no package name — but they have to
-              be listed, or the struck total above is larger than the packages
-              below can account for and the arithmetic stops being checkable.
+              The recurring fee first, and smaller.
+
+              It is the figure that outlives the project: the one-off is paid
+              once and forgotten, this one arrives every month for as long as the
+              offer runs. Leading with it puts the commitment above the invoice.
+              The one-off gets the size instead, being the larger number and the
+              one that decides whether the offer is affordable at all — order
+              says which matters longer, scale says which is bigger.
+
+              The savings sit above the figures they come off, one summed number
+              each, so the panel reads as *this is what you are not paying, this
+              is what you are*.
             */}
-            {quote.partOneOffDiscount > 0 ? (
-              <div className="type-caption flex items-baseline justify-between gap-4">
-                <dt>{summary.partDiscountLabel}</dt>
-                <dd className="num-sm shrink-0 text-right">−{eur(quote.partOneOffDiscount)}</dd>
-              </div>
-            ) : null}
-
-            {quote.appliedRules.map((rule) => (
-              <div
-                key={rule.id}
-                className="type-caption flex items-baseline justify-between gap-4"
-              >
-                <dt>{rule.label}</dt>
-                <dd className="num-sm shrink-0 text-right">
-                  {rule.oneOffDiscount > 0 ? (
-                    <span className="block">−{eur(rule.oneOffDiscount)}</span>
-                  ) : null}
-                  {rule.monthlyDiscount > 0 ? (
-                    <span className="block">−{eur(rule.monthlyDiscount)} / mes.</span>
-                  ) : null}
-                </dd>
-              </div>
-            ))}
-
-            <div className="border-on-signal/25 flex items-baseline justify-between gap-4 border-t pt-4">
-              <dt className="type-body-sm text-on-signal/80">{summary.oneOffLabel}</dt>
-              <dd className="num-xl">{eur(quote.oneOffTotal)}</dd>
-            </div>
-
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="type-body-sm text-on-signal/80">{summary.monthlyLabel}</dt>
-              <dd className="num-xl flex items-baseline gap-1.5">
-                {/* The same device as the struck one-off above, so that a
-                    recurring saving is read the same way as an up-front one. */}
-                {quote.monthlyDiscount > 0 ? (
-                  <span className="num-sm text-on-signal/60 line-through">
-                    {eur(quote.monthlyBeforeDiscount)}
-                  </span>
-                ) : null}
-                {eur(quote.monthly)}
-                <span className="type-caption text-on-signal/80">/ mesec</span>
+            <div className="border-hairline flex items-end justify-between gap-4 border-b pb-5">
+              <dt className="type-body-sm text-mute">{summary.monthlyLabel}</dt>
+              <dd className="text-right">
+                <Saving off={quote.monthlyDiscount} per=" / mes." />
+                <span className="num-lg text-ink block leading-none">
+                  {eur(quote.monthly)}
+                  <span className="type-caption text-mute"> / mesec</span>
+                </span>
               </dd>
             </div>
 
-            {/* Carries the rule that used to sit above the first-year total, so
-                the panel still closes on what the reader saves rather than
-                running the two totals and the saving together as one block. */}
-            {quote.savings > 0 ? (
-              <div className="border-on-signal/25 flex items-baseline justify-between gap-4 border-t pt-4">
-                <dt className="type-body-sm font-semibold">{summary.savingsLabel}</dt>
-                <dd className="num-md font-semibold">{eur(quote.savings)}</dd>
-              </div>
-            ) : null}
+            <div className="border-hairline flex items-end justify-between gap-4 border-b py-5">
+              <dt className="type-body-sm text-mute">{summary.oneOffLabel}</dt>
+              <dd className="text-right">
+                <Saving off={quote.oneOffDiscount} />
+                <span className="num-xl text-ink block leading-none">{eur(quote.oneOffTotal)}</span>
+              </dd>
+            </div>
           </dl>
 
-          <p className="type-caption text-on-signal/70 mt-6">
+          {/* The terms close the block rather than trailing off it — the rule
+              above them is the same hairline that separates the two figures, so
+              the panel reads as three bands and not as two figures with a
+              paragraph loose underneath. */}
+          <p className="type-caption text-mute mt-5">
             {terms.pricesIncludeVat ? null : `${summary.vatNote} `}
             {terms.commitmentNote}
           </p>
 
-          <button
-            type="button"
-            onClick={share}
-            disabled={!shareUrl}
-            className={cn(
-              'label-btn bg-on-signal text-signal mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md px-5',
-              'transition-opacity duration-150 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60',
-            )}
-          >
-            {copied ? (
-              <>
-                <CheckIcon className="size-4" strokeWidth={2} aria-hidden />
-                {summary.shareCopied}
-              </>
-            ) : (
-              <>
-                <LinkIcon className="size-4" strokeWidth={2} aria-hidden />
-                {summary.shareLabel}
-              </>
-            )}
-          </button>
+          {/* One door out of the panel and not two: the reader is still
+              deciding here, and the way to answer a price they have only just
+              arrived at is to say it out loud to somebody. The e-mail keeps its
+              place in the close, once they have finished. See `ContactActions`.
+              */}
+          <ContactActions layout="stack" className="mt-5" />
         </div>
       </div>
+
+      {/*
+        The terms, shut — `FinePrint`, handed in from `page.tsx` rather than
+        imported here. This file is a client component and that block is static
+        markup with a copy file behind it; as `children` it stays on the server,
+        and the browser is sent the scope of the offer as HTML rather than as
+        another kilobyte of strings in the bundle.
+
+        It sits under the whole grid rather than inside the right-hand column,
+        because it qualifies both halves: the rows say what each part is, the
+        panel says what they come to, and the drawer says what neither of them
+        covers.
+      */}
+      {children}
     </Section>
   )
 }

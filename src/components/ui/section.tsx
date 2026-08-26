@@ -53,21 +53,30 @@ export function Section({
 }
 
 /**
- * A section's opening: the label, the heading, and at most one sentence.
+ * A section's opening: the heading, and at most one sentence.
  *
- * The eyebrow is `label-mono` — tracked mono capitals, the page's index voice —
- * rather than the pill the reference system uses. A pill is a small container
- * and containers imply something can be done with them; every other pill-shaped
- * thing here is a control. This is a column heading, and it is set like one.
+ * ## Why there is no eyebrow any more
+ *
+ * Every section opened with one — *Preden vprašate*, *Vaša izbira*, *Kdo bo
+ * delal na tem* — set as tracked mono capitals over the heading. Read one at a
+ * time they are fine. Read as a page they are a second table of contents,
+ * announcing each section a beat before the section announces itself, and in
+ * every case the heading underneath said the same thing better: *Vaša izbira*
+ * over a heading that is already the chooser, *Kdo bo delal na tem* over four
+ * photographs of the people who will.
+ *
+ * The mono voice is the page's index voice, and it still carries the things
+ * that are genuinely index: the masthead rule at the top of the hero, the part
+ * rail, the numerals on the three parts. Spent on a label above every heading it
+ * stopped indexing anything, because a mark that appears everywhere marks
+ * nothing.
  */
 export function SectionHeader({
-  eyebrow,
   heading,
   lead,
   className,
   size = 'title',
 }: {
-  eyebrow?: string
   heading: string
   lead?: string
   className?: string
@@ -75,13 +84,6 @@ export function SectionHeader({
 }) {
   return (
     <header className={cn('max-w-2xl', className)}>
-      {eyebrow ? (
-        <p className="label-mono text-faint mb-3 flex items-center gap-2.5">
-          <span className="bg-hairline-strong inline-block h-px w-6" aria-hidden />
-          {eyebrow}
-        </p>
-      ) : null}
-
       <h2 className={cn(size === 'display' ? 'type-display' : 'type-title', 'text-ink')}>
         {heading}
       </h2>

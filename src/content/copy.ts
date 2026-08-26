@@ -34,7 +34,7 @@ import { eur } from '@/lib/format'
  * four sentences per feature and thirty features in a row, which is a document
  * the reader skims and then asks, on the phone, what it actually includes.
  * Anything that genuinely needs a paragraph is not a feature line — it is a
- * graphic (see `moneyFlow`, `route`) or it belongs in `warranty`.
+ * graphic (see `moneyFlow`, `route`) or it belongs in `fineprint`.
  */
 
 export type FeatureItem = {
@@ -55,136 +55,147 @@ export type FeatureItem = {
   ## Why the lead names the three parts
 
   The cards used to be introduced by a label reading "Ponudba v treh delih" and
-  preceded by two buttons. The cards are the buttons now, and a label announcing
+  preceded by two buttons. The cards are the way in now, and a label announcing
   three things directly above three things is a caption on a photograph of
   itself. So the shape of the offer moved up into the one paragraph the hero
-  has, where it arrives as a sentence rather than as a heading — and the reader
-  meets the structure before they meet the controls for it.
+  has, where it arrives as a sentence rather than as a heading.
 */
 export const hero = {
   eyebrow: 'Ponudba',
-  heading: 'Modernizacija in optimizacija sistema za upravljanje rezervacij izletov z ladjico',
+  heading: 'Povečanjte število rezervacij plovb tujih in domačih gostov.',
   lead: 'Predstavljamo ponudbo, sestavljeno iz 3 delov: **sistem za rezervacije in plačila**, nova **stran za tuje turiste** in **preoblikovanje obstoječe strani** za potrebe domačih gostov ter poslovnih partnerjev. Ponudba omogoča poljuben obseg izvedbe in dodatne popuste, glede na dogovorjeni obseg.',
-  /** The card's own link, under the summary line. */
-  cardCta: 'Podrobno',
   cardIn: 'V ponudbi',
   cardOut: 'Ni v ponudbi',
-  /** Spoken by the circle control, which is otherwise just a shape. */
-  cardAdd: 'Dodaj v ponudbo',
-  cardRemove: 'Odstrani iz ponudbe',
+} as const
+
+/*
+  The index bar across the top of the page, on wide screens only.
+
+  ## Why these are words now
+
+  The bar spent a while as a column in the margin, where there was room for one
+  mark per stop and no more: `01`, a euro sign, an arrow standing in for *the
+  top*. Marks work on the three parts, because the reader meets those numerals
+  on the hero cards before they ever need them again. They never worked on the
+  bookends — an arrow pointing up is a scroll control rather than an index
+  entry, and `€` is a column heading in search of a column.
+
+  Across the top there is room for language, so the bookends are simply what
+  they point at. `Ponudba` is the offer itself, which is what the top of this
+  document is; `Cenik` is the panel where the figures are added up, and naming
+  it as a price list is more use to somebody scanning for the number than
+  `Povzetek` would be.
+
+  The three parts keep their numerals and gain their names from `offer.ts` —
+  that is where a part is named, and naming it twice would be two things to keep
+  in step.
+*/
+export const rail = {
+  /** Names the landmark itself, for a reader listing the page's regions. */
+  label: 'Deli ponudbe',
+  top: {
+    name: 'Ponudba',
+  },
+  summary: {
+    name: 'Cenik',
+  },
 } as const
 
 /**
- * The offer in three claims, for the reader who never gets past the first
- * screenful — the partner, the accountant, whoever actually signs.
+ * The three problems, one per part of the offer.
  *
- * ## Why all three are about money and not about software
+ * ## Why they are keyed by part
  *
- * The reader this section is written for signs invoices; they do not install
- * anything, and “two lines of code” is an answer to a question they have not
- * asked. So each claim is a sentence about the takings: what stays whole, what
- * is being lost every night, and who never arrives to pay in the first place.
- * The mechanics — the snippet, the afternoon of setup, the monthly notice
- * period — keep their place further down, in `objections`, where a reader who
- * has already decided they want this goes looking for the catch.
+ * The page used to open with two sections of observation: `Zakaj izboljšati
+ * sistem`, three claims about the takings, and `Kaj vidimo od zunaj`, six things
+ * wrong with how the season is run today. Both were true and neither was
+ * answerable. Nine observations followed by three parts left the reader to work
+ * out which of the nine each part was for, and for several of them the honest
+ * answer was *none of these, directly*.
  *
- * ## Why these are not numbered
+ * So there are three now, keyed by the part that fixes each one, and the hero
+ * sets each one directly above its part's card with an arrow between. A problem
+ * no part answers has nowhere to live in this file, which is the point — it
+ * stops the diagnosis from growing past what the offer can actually address.
  *
- * Numerals on this page mean one thing: *which part of the offer*. `01`, `02`
- * and `03` appear on the hero cards, on the section headers and on the rows of
- * the summary, and they always point at the same three
- * things. Numbering anything else — three claims, four steps, six objections —
- * would spend that meaning on decoration and leave the reader working out, each
- * time, which kind of `02` they are looking at.
+ * ## What was folded together, and what was dropped
+ *
+ * `booking` carries what were three separate observations — the call nobody
+ * makes, the booking that arrives at eleven at night, the last two seats sold
+ * twice. They are one failure with three symptoms, and a reader recognises the
+ * failure faster than they read the list.
+ *
+ * *Do vkrcanja nihče ne ve prave številke* — the schedule in a spreadsheet, the
+ * bookings in a notebook, the money in a tin — is dropped rather than folded in.
+ * It is a consequence of the same cause, and adding it turned a problem into a
+ * paragraph.
+ *
+ * The no-commission claim that opened the old `takeaways` was never a problem
+ * statement at all. It is the money argument, and it is already made where it
+ * belongs: drawn, in `moneyFlow`, under `01`.
  */
-export const takeaways = {
-  eyebrow: 'Motivacija',
-  heading: 'Zakaj izboljšati sistem',
-  items: [
-    {
-      icon: 'search',
-      title: 'Turisti vas lažje najdejo',
-      body: 'Tuji turist v iskalnik vpiše **“Ljubljana boat tour”**, ker želi enkratno doživetje na Ljubljanici. Nova stran govori samo o rednih plovbah, v njegovem jeziku, z rezervacijo na prvem zaslonu. Ne osredotoča se na piknike in zasebne najeme.',
-    },
-    {
-      icon: 'moon',
-      title: 'Prodajate tudi takrat, ko ne delate',
-      body: 'Turist, ki si želi rezervacijo opraviti izven uradnih ur, ali iz tujine, danes izgubite. V sistem lahko še vedno ročno vnesete telefonske rezervacije, a sistem sprejema tudi tiste, ki pridejo ob polnoči.',
-    },
-    {
-      icon: 'banknote',
-      title: 'Od vstopnice ne vzamemo nič',
-      body: 'Turist, ki plača s kartico, plača na **vaš** račun. Edini odbitek je bančna provizija, ki gre banki, mi ne vzamemo ne odstotka ne fiksnega zneska nakupa vstopnice.',
-    },
-  ] satisfies FeatureItem[],
-} as const
+export type Problem = {
+  /**
+   * The failure, in the reader's own words. Under about thirty-five characters
+   * — it is set over a card in a third of the page's width and wraps to three
+   * lines beyond that.
+   */
+  title: string
+  /**
+   * Two sentences at most. This is the recognition, not the argument; the case
+   * for the part that answers it is made in the part's own section.
+   */
+  body: string
+}
 
-export const diagnosis = {
-  eyebrow: 'Stanje',
-  heading: 'Kaj vidimo od zunaj',
-  lead: 'Ko se osredotočamo na posel, včasih spregledamo malenkosti, ki bi nas v trenutku ločile od konkurence.',
-  groups: [
-    {
-      title: 'Kar vidi gost',
-      items: [
-        {
-          title: 'Ime, ki ga nihče ne išče',
-          body: 'Tuji turist vtipka **“Ljubljana boat tour”**. Ne vtipka “Emona” in ne vtipka “ladjica”.',
-        },
-        {
-          title: 'Dve ponudbi na eni strani',
-          body: 'Dnevni izlet za turista in zasebni piknik za domačega gosta sta dva posla. Ena stran za oboje prepriča polovico obeh.',
-        },
-        {
-          title: 'Preveč korakov do vkrcanja',
-          body: 'Turist, ki mora poklicati, da izve, ali je še prostor, večinoma ne pokliče. Pogleda naslednji zadetek na spletu.',
-        },
-      ],
-    },
-    {
-      title: 'Kar se dogaja v ozadju',
-      items: [
-        {
-          title: 'Zadnji dve mesti, prodani dvakrat',
-          body: 'Ena oseba prodaja na lokaciji, ena po telefonu. Če se ne uskladita sproti, se zgodi, da se proda preveč ali pa premalo mest.',
-        },
-        {
-          title: 'Rezervacija ob 23. uri je izgubljena',
-          body: 'Če mora za vsako rezervacijo nekdo dvigniti telefon, se prodaja konča takrat, ko greste spat.',
-        },
-        {
-          title: 'Do vkrcanja nihče ne ve prave številke',
-          body: 'Vozni red hranite v preglednici, rezervacije v zvezku, denar v skrinjici.',
-        },
-      ],
-    },
-  ],
-} as const
-
-export const proposal = {
-  eyebrow: 'Predlog',
-  heading: 'Naša rešitev je sestavljena iz treh delov',
-  lead: 'Pripravili smo modularno ponudbo, ki jo lahko prilagodite svojim potrebam. Vsak del je podrobno opisan spodaj, vi pa izberete, kaj želite vključiti v svojo ponudbo. Skupna cena in popusti se sproti posodabljajo glede na vašo izbiro.',
-} as const
+export const problems: Record<OfferPartId, Problem> = {
+  booking: {
+    title: 'Rezervacija na spletu ni mogoča',
+    body: 'Turist, ki mora poklicati, da izve, ali je še prostor, večinoma ne pokliče. Rezervacije ponoči ali iz tujine, so izgubljene. Plačati se da samo v živo.',
+  },
+  landing: {
+    title: 'Tuji turist vas ne najde',
+    body: 'V iskalnik vtipka **“Ljubljana boat tour”**. Ne vtipka “Emona” in ne “ladjica”. Če stran vseeno odpre, ta govori o ponudbi, ki ju ne išče.',
+  },
+  redesign: {
+    title: 'Ena stran za dva različna gosta',
+    body: 'Dnevni izlet za turista in zasebni najem s pogostitvijo sta dva posla. Ena stran za oboje prepriča polovico obeh, tudi tistega, ki pri vas naroči največ.',
+  },
+}
 
 type PartCopy = {
-  /** Sits next to the part numeral: `01 — MESEČNA NAROČNINA`. */
+  /**
+   * What the part *is*, and the section's display-size title.
+   *
+   * A few words a reader can recognise the part by having read nothing else —
+   * it is the largest line in the section, so it has to survive being the only
+   * one that gets read. Keep it under about forty characters: at display size
+   * it wraps to a third line beyond that.
+   */
   kicker: string
+  /**
+   * The commercial framing, set as a subtitle under `kicker`: what is being
+   * subscribed to, or who the thing is for. A short sentence, not a second
+   * title.
+   */
   heading: string
   lead: string
   /**
-   * Features, grouped. The group titles are where the operator's work actually
-   * happens — the website, the office, the jetty — rather than the software's
-   * own module names, which is what turns a list of thirty capabilities into
-   * three places the reader can already picture.
+   * Features, grouped.
+   *
+   * `id` keys the group to its exhibit in `page.tsx` and is never printed. The
+   * grouping still does its work unprinted: a screenshot belongs to one of the
+   * three places the operator's day happens, and a figure of the jetty sitting
+   * under the office lines is worse than no figure at all.
+   *
+   * `title` is optional, and part 01 does without it. Where a group opens on an
+   * exhibit, the exhibit's own heading names the block, and a group title above
+   * it was a heading introducing a heading — two lines of title in a row, the
+   * upper one saying the vaguer of the two things. Where a group has no figure,
+   * or where the figure is not the point of it, the title is what the reader
+   * has to go on and it stays.
    */
-  /**
-   * `id` keys the group to its exhibit in `page.tsx`. It is not printed: the
-   * screenshot belongs to one of the three places the operator's day happens,
-   * and a figure of the jetty sitting under the office group is worse than no
-   * figure at all.
-   */
-  groups: { id: string; title: string; items: FeatureItem[] }[]
+  groups: { id: string; title?: string; items: FeatureItem[] }[]
   /**
    * Answers "and what if we don't take this one?" honestly, at the foot of the
    * section, and only while the part is out of the offer.
@@ -206,11 +217,10 @@ export const parts: Record<OfferPartId, PartCopy> = {
     groups: [
       {
         id: 'site',
-        title: 'Na vaši strani',
         items: [
           {
             icon: 'moon',
-            title: 'Rezervacije tudi ob polnoči',
+            title: 'Rezervacije in plačila izven uradnih ur',
             body: 'Turist izbere termin in plača neposredno na spletni strani. V primeru, da rezervacije ne dokonča, gredo mesta po **35 minutah** nazaj v prodajo.',
           },
           {
@@ -227,7 +237,6 @@ export const parts: Record<OfferPartId, PartCopy> = {
       },
       {
         id: 'office',
-        title: 'V pisarni',
         items: [
           {
             icon: 'calendar',
@@ -242,13 +251,12 @@ export const parts: Record<OfferPartId, PartCopy> = {
           {
             icon: 'dashboard',
             title: 'Dnevni pregled rezervacij',
-            body: 'Kdo je vkrcan, kod mora plačati ob prihodu in kateri odhodi v prihodnjem tednu ne bodo polni.',
+            body: 'Kdo je vkrcan, kdo mora plačati ob prihodu in kateri odhodi v prihodnjem tednu ne bodo polni.',
           },
         ],
       },
       {
         id: 'jetty',
-        title: 'Na pomolu',
         items: [
           {
             icon: 'clipboard',
@@ -272,13 +280,12 @@ export const parts: Record<OfferPartId, PartCopy> = {
       'Brez tega ostane nova stran lepa vitrina, v kateri se ne da nič kupiti. Rezervacije še naprej tečejo po telefonu.',
   },
   landing: {
-    kicker: 'Landing page za tujega gosta',
+    kicker: 'Landing page za turiste',
     heading: 'Stran, namenjena tujim gostom',
     lead: 'Nova stran (t.i. landing page) na svoji domeni, namenjena za turista, ki je v Ljubljani dva dni in išče, kaj bi počel danes popoldne.',
     groups: [
       {
         id: 'contents',
-        title: 'Kaj je na njej',
         items: [
           {
             icon: 'globe',
@@ -310,17 +317,6 @@ export const parts: Record<OfferPartId, PartCopy> = {
             title: 'Slovensko in angleško',
             body: 'Angleščina je glavna, ker je glavni gost tuji turist.',
           },
-          /*
-            Where the reader first meets the monthly maintenance fee. Without a
-            line here it appears for the first time as a number in the totals
-            panel, attached to a site they have just been told is theirs — which
-            is the point at which a recurring charge reads as a catch.
-          */
-          {
-            icon: 'code',
-            title: 'Za stranjo nekdo stoji',
-            body: 'Gostovanje, popravki in potrebne posodobitve tečejo naprej v **mesečnem vzdrževanju**. Stran ni enkraten izdelek, ki nato leta sameva.',
-          },
         ],
       },
     ],
@@ -347,7 +343,7 @@ export const parts: Record<OfferPartId, PartCopy> = {
   redesign: {
     kicker: 'Spletna stran za zasebni najem',
     heading: 'Domači gost pristane na stari strani...',
-    lead: 'Prva dva modula ponudbe delujeta neodvisno in sta namenjena tujim turistom. Zasebni najem s pogostitvijo je vaša največja posamična prodaja, gost zanj pride prav na ljubljanica.eu, ki bo ob novi strani **izpadla starejša**, kot je. Če obe strani nastaneta skupaj, plačate skupno ceno vzdrževanja.',
+    lead: 'Prva dva modula ponudbe delujeta neodvisno in sta namenjena tujim turistom. Zasebni najem s pogostitvijo je vaša največja posamična prodaja, gost zanj pride prav na ljubljanica.eu, ki bo ob novi strani **izpadla starejša**, kot je. Če obe strani nastaneta skupaj, plačate **skupno ceno vzdrževanja**.',
     groups: [
       {
         id: 'plan',
@@ -408,26 +404,34 @@ export const parts: Record<OfferPartId, PartCopy> = {
  * for others. It is also the same figure in both columns, so drawing it twice
  * makes the comparison honest without costing the comparison anything.
  *
- * ## Why the season figure comes first
+ * ## Why the ticket comes first and the season last
  *
- * Ninety-two cents is a number nobody flinches at, and a reader who meets it
- * first has already decided the whole question is small by the time the season
- * total arrives. So the order is inverted: the consequence leads — thousands of
- * euros a season, which is the number that actually decides this — and the
- * ticket breakdown follows as the working behind it, for the reader who wants to
- * see where the figure came from before believing it.
+ * Because that is the order in which the argument is earned. Ninety-two cents
+ * off a €12 fare is a figure nobody disputes — it is arithmetic, and the reader
+ * checks it against a price list they already know. Six thousand tickets later
+ * it is €5.520, and a reader who has just watched the cents come off one ticket
+ * meets that number having done the multiplication themselves.
  *
- * It is also the one claim a percentage cannot answer, because it grows exactly
- * as fast as the business does. A good season makes it worse.
+ * Led with, the season total is a sales figure and gets read as one. Arrived at,
+ * it is the consequence of a deduction the reader has already accepted, which is
+ * the one claim a percentage cannot answer: it grows exactly as fast as the
+ * business does. A good season makes it worse.
+ *
+ * ## Why the labels are short
+ *
+ * Every one of them is now a row heading in a three-column table whose two
+ * money columns are sized by their widest figure, so the heading column gets
+ * whatever is left — about seventy pixels on a phone. `Prek rezervacijske
+ * platforme` set three lines deep in that space; `Rezervacijska platforma` sets
+ * two. Nothing here is written longer than the column it has to live in.
  *
  * Rates are stated as a typical price list rather than as any one vendor's,
  * because vendors change theirs and a proposal that quotes a competitor's
  * pricing ages badly the week they discount it.
  */
 export const moneyFlow = {
-  label: 'Kam gre denar',
-  heading: 'Koliko plačam, če vstopnica stane 12 €?',
-  lead: 'Alpaca Booking računa le mesečno naročnino. Rezervacijske platforme si od vsake vzamejo fiksen znesek in odstotek. Spodaj je prikazana primerjava med Alpaca Booking in konkurenčno platformo za rezervacije.',
+  heading: 'Koliko provizije računa Alpaca Booking?',
+  lead: 'Alpaca Booking računa le **mesečno naročnino**. **Konkurenčne** rezervacijske platforme si od vsake vstopnice vzamejo **fiksen znesek in odstotek**. Spodaj sta oba načina drug ob drugem, na isti vstopnici in na isti sezoni.',
   /** The fare the whole graphic is drawn from. PLACEHOLDER — a real ticket price. */
   ticket: 12,
   paysLabel: 'Gost plača',
@@ -447,26 +451,44 @@ export const moneyFlow = {
     note: 'Bančno provizijo plačate banki neposredno, nam pa mesečni znesek — enak pri tisoč vstopnicah in pri desetih tisoč.',
   },
   theirs: {
-    title: 'Prek rezervacijske platforme',
+    title: 'Rezervacijska platforma',
+    /**
+     * What the column is headed. One word, because the column is sized by its
+     * widest line and `REZERVACIJSKA` set in tracked mono capitals is 110px of
+     * a phone's 288 — width taken straight out of the row headings beside it.
+     * The full name is two lines below, on the note that belongs to this column.
+     */
+    column: 'Platforma',
     cutLabel: 'Delež platforme',
     cut: 0.92,
-    /** The cut as a share of the fare, which is the figure that lands. */
-    cutShare: '7,7 % vstopnice',
-    note: 'Tipičen cenik je 0,50 € plus 3,5 % od vsake prodane vstopnice — in to poleg mesečne naročnine.',
+    /**
+     * The cut as a share of the fare, which is the figure that lands. Set under
+     * the euro figure and pared to the percentage alone: the row it sits on is
+     * already headed `Delež platforme`, and the row above it says what the
+     * ticket costs, so `vstopnice` was a word repeating two labels.
+     */
+    cutShare: '7,7 %',
+    note: 'Tipičen cenik je 0,50 € plus 3,5 % od vsake prodane vstopnice.',
   },
   season: {
-    label: 'Čez sezono',
+    /** The row heading. The ticket count is set under it, from `tickets`. */
+    label: 'Čez sezono plačate',
     /** PLACEHOLDER — tickets sold in a season. The multiplier, so it is marked. */
     tickets: 6000,
-    lead: 'Primerjava provizije pri prodaji 6.000 vstopnic.',
-    oursLabel: 'Alpaca Booking',
-    theirsLabel: 'Platforme za rezervacije',
-    note: 'Poleg tega platforme zaračunajo še mesečno naročnino.',
-  },
-  /** Heads the two rails, which are now the working behind the season figure. */
-  breakdown: {
-    label: 'Od kod ta razlika',
-    lead: 'Ena vstopnica, razdeljena na oba načina.',
+    /** Reads as `6.000 vstopnic`, composed around `tickets`. */
+    sub: 'vstopnic',
+    /**
+     * Set over both season figures, identical and in the same grey, because it
+     * is true of both: everybody here sells a subscription. Stating it on the
+     * row rather than in the small print is what makes the figures under it
+     * comparable — one column is a subscription and nothing else, the other is a
+     * subscription and €5.520, and that is the whole difference.
+     *
+     * It also retires the line the footnote used to carry. A qualification a
+     * reader has to find at the bottom of the section to know what the big
+     * number leaves out belongs on the number.
+     */
+    prefix: 'Mesečna naročnina +',
   },
   footnote:
     'Bančna provizija je v obeh stolpcih ista in gre banki, ne nam: 1,5 % + 0,25 € za evropske kartice in 3,15 % + 0,25 € za ostale — pri 12-evrski vstopnici 0,43 € oziroma 0,63 €. Deleži platform se razlikujejo po ponudniku in pogodbi; 0,92 € je izračun po tipičnem ceniku. Fiksno je le to, da mi svojega deleža nimamo.',
@@ -479,10 +501,18 @@ export const moneyFlow = {
  * thing drawn as a sequence — and why it still carries no numerals. The numbers
  * belong to the parts of the offer; a rail with four stops reads as an order
  * without needing to be counted.
+ *
+ * ## One line over it, not two
+ *
+ * `Pot obiskovalca na vaši spletni strani` was the mono label and `Od iskalnika
+ * do vkrcanja` the heading — which is one title too many for a four-stop rail
+ * that spells out both of its ends in the stops themselves. The label was the
+ * more useful of the two, because it says what the drawing *is* rather than
+ * paraphrasing what it depicts, so it took the heading's place and the heading
+ * went.
  */
 export const route = {
-  label: 'Pot obiskovalca na vaši spletni strani',
-  heading: 'Od iskalnika do vkrcanja',
+  heading: 'Pot obiskovalca na vaši spletni strani',
   steps: [
     {
       icon: 'search',
@@ -529,15 +559,16 @@ export const route = {
  */
 export const exhibits = {
   /*
-    English on purpose, and the lead says so before the reader wonders. Two
-    languages kept separate is a claim in the feature list above; the three
-    captures on this page happen to prove it between them, which is worth more
-    than the sentence.
+    English on purpose, and nothing on the page says so. There was a lead that
+    was meant to — by the end it said only *Rezervacijski obrazec sistema Alpaca
+    Booking*, which named the picture the heading had already named and excused
+    nothing. Two languages kept separate is a claim in the feature list above,
+    and the captures prove it between them: this one English, the console
+    Slovene. A caption apologising for the language would point at the one thing
+    the reader had not noticed.
   */
   widget: {
-    label: 'Obrazec za rezervacijo',
-    heading: 'Kar vidi gost na vaši strani',
-    lead: 'Rezervacijski obrazec sistema Alpaca Booking:',
+    heading: 'Rezervacijski obrazec za turista na vaši spletni strani',
     alt: 'Rezervacijski obrazec: vrstica dni od torka 25. do ponedeljka 31. avgusta z izbranim 25., pod njo trije termini izbranega dne, od katerih je prvi razprodan.',
     callouts: [
       {
@@ -553,13 +584,11 @@ export const exhibits = {
         text: 'Zasedenega termina turist ne more izbrati.',
       },
     ],
-    caption:
-      'Obrazec prevzame barve, pisavo in obliko strani, na katero je vgrajen.',
+    caption: 'Obrazec prevzame barve, pisavo in obliko strani, na katero je vgrajen.',
   },
 
   dashboard: {
-    label: 'Nadzorna plošča',
-    heading: 'Kaj vidite, ko zjutraj odprete sistem',
+    heading: 'Nadzorna plošča sistema za vodenje rezervacij',
     alt: 'Nadzorna plošča: pet številk za današnji dan — 4 termini, 62 udeležencev, 11 od 62 prijavljenih, 224 € za pobrati, 18 sprejetih rezervacij, od tega 8 prek spletne strani. Pod njimi opozorilo o dveh odhodih v naslednjih sedmih dneh in seznam štirih današnjih terminov z zasedenostjo.',
     callouts: [
       {
@@ -584,8 +613,7 @@ export const exhibits = {
   },
 
   checkin: {
-    label: 'Prijava na pomolu',
-    heading: 'Seznam potnikov ob vkrcanju',
+    heading: 'Seznam potnikov ob vkrcanju za posadko',
     alt: 'Seznam potnikov za Classic Ljubljana Tour ob 10.00: štiri rezervacije z imenom, številom oseb, oznako plačila, telefonsko številko in gumbom za prijavo. Pri prvi piše neplačano in za pobrati 80 €, pri drugi 3 od 6 prijavljenih.',
     callouts: [
       {
@@ -601,8 +629,7 @@ export const exhibits = {
         text: 'Družina šestih, prišli trije. Prijavljate osebe, ne rezervacije.',
       },
     ],
-    caption:
-      'Posnetek zaslona, ki ga vidi posadka pred vkrcanjem.',
+    caption: 'Posnetek zaslona, ki ga vidi posadka pred vkrcanjem.',
   },
 
   /*
@@ -612,8 +639,7 @@ export const exhibits = {
     exactly like the three captures above it quietly erases that.
   */
   landing: {
-    label: 'Skica postavitve',
-    heading: 'Kaj je na prvem zaslonu nove strani',
+    heading: 'Izbira termina, takoj na prvem zaslonu',
     lead: 'Skica razporeditve z **resničnim obrazcem** na svojem mestu.',
     alt: 'Skica nove strani: v glavi levo risba Ljubljanice z gradom, mostom in ladjico, desno resničen rezervacijski obrazec z izbranim datumom in tremi termini. Pod glavo tri sive ikone s sivimi črtami namesto besedila.',
     callouts: [
@@ -635,10 +661,131 @@ export const exhibits = {
   },
 } as const
 
-export const objections = {
-  eyebrow: 'Preden vprašate',
-  heading: 'Pogosta vprašanja in pomisleki',
-  items: [
+export const summary = {
+  heading: 'Ponudba, ki jo sestavite sami',
+  lead: 'Zadnja priložnost, da kaj dodate ali odstranite. Vsota se preračuna sproti.',
+  emptyHeading: 'Trenutno niste izbrali ničesar',
+  emptyBody:
+    'Obkljukajte dele spodaj ali na karticah na vrhu strani — ali si spodaj naložite priporočeno kombinacijo.',
+  restore: 'Nastavi priporočeno',
+  /*
+    Nouns, not adverbs. `Enkratno` and `Mesečno` described a manner of paying,
+    which worked while they were the only two totals in the panel; sitting under
+    a `Popust` row they read as two more modifiers of the discount rather than as
+    the two things being billed. `Strošek` says what they are.
+  */
+  oneOffLabel: 'Enkratni strošek',
+  monthlyLabel: 'Mesečni strošek',
+  /*
+    Every concession on one line — the half-price setup and every rule alike.
+
+    Itemising them put five rows in front of the two figures the reader came
+    for, and each row had to name the rule that granted it, which meant naming
+    three packages the offer does not otherwise have. The rules still move the
+    money; nothing on the page says they exist.
+
+    The row carries two figures rather than one sum, because the two savings are
+    not the same kind of number — 350 € off today and 40 € off every month only
+    add up once a year is assumed, and nothing here assumes one.
+  */
+  discountLabel: 'Popust',
+  vatNote: 'Vsi zneski so brez DDV.',
+  inOffer: 'V ponudbi',
+  addToOffer: 'Dodaj v ponudbo',
+  removeFromOffer: 'Odstrani iz ponudbe',
+  /** Heads the note at the foot of a part the reader has left out. */
+  absenceLabel: 'Ni v ponudbi',
+} as const
+
+/**
+ * The fine print: every edge of the offer, in one place.
+ *
+ * ## Why the guarantee, the two lists and the objections are one thing
+ *
+ * They were two sections — `Garancija in obseg` and `Pogosta vprašanja in
+ * pomisleki` — and the split was by mood rather than by subject. Both were
+ * answering the same question, asked once by a reader who has just seen a
+ * price: *what exactly am I agreeing to*. Answering it in two places let the
+ * same fact be given twice in different words — the Stripe account is an
+ * exclusion and an objection, the monthly fees are an inclusion and an
+ * objection, the domain is promised by the guarantee and again by `Brez
+ * vezave` — and a reader who finds the same thing said twice starts checking
+ * whether it was said the same way.
+ *
+ * As one export it is four clauses of one answer: what we promise, what the
+ * price covers, what it does not, and what is left on the reader's side.
+ * Nothing here is commentary on the offer any more; it is the offer's own
+ * terms.
+ *
+ * ## Why the "not included" list is as long as the other one
+ *
+ * The source brief keeps a list of things the software does not do — refunds
+ * from the console, guest self-service, reminders, exports, OTA sync — and warns
+ * that a page implying any of them creates a bad first meeting. This section is
+ * where that list stops being a constraint and starts being useful: an operator
+ * who has been sold software before is looking for what the offer quietly leaves
+ * out, and finding it written down, unprompted, is worth more than another
+ * paragraph of reassurance.
+ */
+export const fineprint = {
+  heading: 'Podrobnosti ponudbe',
+  /*
+    Printed under the heading while the block is still shut, because that is the
+    whole job of a line on a closed drawer: it has to say what opening it gets
+    you, in the reader's own terms, before they spend a click finding out. Four
+    clauses, named in the order they are printed.
+  */
+  lead: 'Garancija, kaj je v ceni, česa ni in kaj ostane na vas.',
+  guaranteeLabel: 'Garancija',
+  includedLabel: 'Vključeno v ceno',
+  excludedLabel: 'Ni vključeno',
+  /*
+    These six were their own section under the heading "Pogosta vprašanja in
+    pomisleki", which named the reader's state of mind rather than the content,
+    and then spent a while as "Kaj zahteva od vas", which named it as a demand
+    the offer makes. Both missed what the list actually is: the reader's side of
+    the agreement — equipment, disruption, time, commitment — with the answer
+    *nothing* under five of the six headings. `Vaše obveznosti` is the word a
+    contract uses for that side, and it is the one the sceptical reader is
+    looking for. Naming it plainly, and then having almost nothing to put under
+    it, is a stronger sentence than any wording that softens the question.
+  */
+  requiresLabel: 'Vaše obveznosti',
+  included: [
+    'Postavitev izletov, sezone in cenika skupaj z vami',
+    'Namestitev rezervacijskega obrazca in prilagoditev vašim barvam',
+    'Nova stran v slovenščini in angleščini',
+    'Uvajanje ekipe in kratka pisna navodila',
+    'Odprava napak na tem, kar smo naredili',
+    'Strukturirani podatki o izletih, urnikih in cenah za iskalnike',
+    'Prilagoditev besedil rezervacijskega obrazca vašim izrazom',
+    'Prenos strani na vašo domeno in predaja vseh dostopov',
+    /*
+      What the 40 €/mo actually buys. It has to be stated somewhere the reader
+      goes looking, or a recurring fee attached to a site that is already built
+      and paid for reads as rent on their own property.
+    */
+    'V mesečnem vzdrževanju: gostovanje strani, odprava napak in posodobitve, ki jih stran potrebuje, da deluje naprej',
+  ],
+  excluded: [
+    'Nove fotografije in slikovno gradivo - naročite jih posebej, če želite',
+    'Nov logotip ali prenova obstoječega — naročite ga posebej, če želite',
+    'Odprtje Stripe računa in njegove provizije za posamezno transakcijo — račun odprete sami, brezplačno',
+    /*
+      Narrowed from "domene in gostovanja". Hosting is inside the maintenance
+      fee now, and a page that excludes what it elsewhere includes is the kind of
+      contradiction a reader finds right before they stop believing the rest.
+    */
+    'Letni strošek domene — registrirate jo sami in ostane vaša',
+    `Nove strani, nove funkcionalnosti in preoblikovanja — to ni vzdrževanje, ampak delo po urni postavki ${eur(terms.hourlyRate)} na uro, vedno po predhodnem dogovoru`,
+    'Povezava z Viator, GetYourGuide ali TripAdvisor — sistem je nima',
+    'Vračila denarja iz sistema — odpoved sprosti mesta, denar vrnete prek Stripe ali v gotovini',
+    'Samopostrežna odpoved ali sprememba s strani gosta — spremembe gredo prek vas',
+    'Opomniki, SMS in e-poštne kampanje — sistem pošlje samo potrdilo o rezervaciji',
+    'Izvozi, poročila in računovodske povezave',
+    'Jeziki poleg slovenščine in angleščine — dodamo jih po dogovoru',
+  ],
+  requires: [
     {
       title: 'Nobene nove opreme',
       body: 'Teče v brskalniku, na računalniku v pisarni in na telefonu posadke.',
@@ -674,92 +821,6 @@ export const objections = {
   ],
 } as const
 
-export const summary = {
-  eyebrow: 'Vaša izbira',
-  heading: 'Ponudba, ki jo sestavite sami',
-  lead: 'Zadnja priložnost, da kaj dodate ali odstranite. Vsota se preračuna sproti, izbira pa ostane v povezavi — pošljite jo naprej in prejemnik vidi točno to, kar vidite vi.',
-  emptyHeading: 'Trenutno niste izbrali ničesar',
-  emptyBody:
-    'Obkljukajte dele spodaj ali na karticah na vrhu strani — ali si spodaj naložite priporočeno kombinacijo.',
-  restore: 'Nastavi priporočeno',
-  oneOffLabel: 'Enkratno',
-  monthlyLabel: 'Mesečno',
-  /*
-    "V prvem letu", because one of the two savings in this offer is recurring
-    and a recurring saving has no total until a period is named. The figure is
-    exactly the line above it subtracted from what the same year would list at,
-    which is a claim a reader can check — "Prihranek" alone was a number whose
-    horizon they had to guess.
-  */
-  savingsLabel: 'Prihranek v prvem letu',
-  /** The half-price setup, which no package grants and so no package can name. */
-  partDiscountLabel: 'Popust na postavitev',
-  beforeDiscountLabel: 'Pred popustom',
-  vatNote: 'Vsi zneski so brez DDV.',
-  shareLabel: 'Kopiraj povezavo na to izbiro',
-  shareCopied: 'Povezava kopirana',
-  inOffer: 'V ponudbi',
-  addToOffer: 'Dodaj v ponudbo',
-  removeFromOffer: 'Odstrani iz ponudbe',
-  /** Heads the note at the foot of a part the reader has left out. */
-  absenceLabel: 'Ni v ponudbi',
-} as const
-
-/**
- * The guarantee, and the edges of the offer.
- *
- * ## Why the "not included" column is as long as the other one
- *
- * The source brief keeps a list of things the software does not do — refunds
- * from the console, guest self-service, reminders, exports, OTA sync — and warns
- * that a page implying any of them creates a bad first meeting. This section is
- * where that list stops being a constraint and starts being useful: an operator
- * who has been sold software before is looking for what the offer quietly leaves
- * out, and finding it written down, unprompted, is worth more than another
- * paragraph of reassurance.
- */
-export const warranty = {
-  eyebrow: 'Kaj obljubimo (in česa ne)',
-  heading: 'Garancija in obseg',
-  guaranteeLabel: 'Garancija',
-  includedLabel: 'Vključeno v ceno',
-  excludedLabel: 'Ni vključeno',
-  included: [
-    'Postavitev izletov, sezone in cenika skupaj z vami',
-    'Namestitev rezervacijskega obrazca in prilagoditev vašim barvam',
-    'Nova stran v slovenščini in angleščini',
-    'Uvajanje ekipe in kratka pisna navodila',
-    'Odprava napak na tem, kar smo naredili',
-    'Strukturirani podatki o izletih, urnikih in cenah za iskalnike',
-    'Prilagoditev besedil rezervacijskega obrazca vašim izrazom',
-    'Prenos strani na vašo domeno in predaja vseh dostopov',
-    /*
-      What the 40 €/mo actually buys. It has to be stated somewhere the reader
-      goes looking, or a recurring fee attached to a site that is already built
-      and paid for reads as rent on their own property.
-    */
-    'V mesečnem vzdrževanju: gostovanje strani, odprava napak in posodobitve, ki jih stran potrebuje, da deluje naprej',
-  ],
-  excluded: [
-    'Nove fotografije in slikovno gradivo - naročite jih posebej, če želite',
-    'Nov logotip ali prenova obstoječega — naročite ga posebej, če želite',
-    'Odprtje Stripe računa in njegove provizije za posamezno transakcijo — račun odprete sami, brezplačno',
-    /*
-      Narrowed from "domene in gostovanja". Hosting is inside the maintenance
-      fee now, and a page that excludes what it elsewhere includes is the kind of
-      contradiction a reader finds right before they stop believing the rest.
-    */
-    'Letni strošek domene — registrirate jo sami in ostane vaša',
-    `Nove strani, nove funkcionalnosti in preoblikovanja — to ni vzdrževanje, ampak delo po urni postavki ${eur(terms.hourlyRate)} na uro, vedno po predhodnem dogovoru`,
-    'Povezava z Viator, GetYourGuide ali TripAdvisor — sistem je nima',
-    'Vračila denarja iz sistema — odpoved sprosti mesta, denar vrnete prek Stripe ali v gotovini',
-    'Samopostrežna odpoved ali sprememba s strani gosta — spremembe gredo prek vas',
-    'Opomniki, SMS in e-poštne kampanje — sistem pošlje samo potrdilo o rezervaciji',
-    'Izvozi, poročila in računovodske povezave',
-    'Jeziki poleg slovenščine in angleščine — dodamo jih po dogovoru',
-  ],
-} as const
-
 /**
  * The four names.
  *
@@ -775,7 +836,6 @@ export const warranty = {
  * carry two lines of tracked-out capitals saying different kinds of thing.
  */
 export const team = {
-  eyebrow: 'Kdo bo delal na tem',
   heading: 'Ekipa in sodelavci',
   lead: 'Za projektom stoji ekipa strokovnjakov z različnih področij. Razvoj, uporabniška izkušnja, oblikovanje in marketing niso ločeni svetovi. Zato jih pri delu povezujemo, da lahko vsak problem pogledamo iz več zornih kotov in poiščemo najboljšo rešitev. Vsak član ekipe prevzema odgovornost za svoje področje, skupaj pa skrbimo, da je končni rezultat izveden po najvišjih standardih.',
   /** Column headings over the cards; see the note above. */
@@ -786,11 +846,10 @@ export const team = {
 } as const
 
 export const close = {
-  eyebrow: 'Če se vam zdi smiselno, se slišimo',
   heading: 'Naslednji korak',
   lead: 'Najhitrejša pot naprej je kratek sestanek: sistem pokažemo v živo, na vaših izletih in vaših cenah.',
-  emailCta: 'Pošljite to izbiro po e-pošti',
-  callCta: 'Pokličite',
+  emailCta: 'Pišite nam',
+  callCta: 'Potrdite in pokličite',
   mailSubject: 'Ponudba — Ladjica Emona in Emonca',
 } as const
 

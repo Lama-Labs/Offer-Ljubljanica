@@ -57,7 +57,7 @@ function initials(name: string): string {
 export function Team() {
   return (
     <Section id="ekipa">
-      <SectionHeader eyebrow={teamCopy.eyebrow} heading={teamCopy.heading} lead={teamCopy.lead} />
+      <SectionHeader heading={teamCopy.heading} lead={teamCopy.lead} />
 
       <ul className="mt-10 grid gap-x-10 gap-y-12 sm:grid-cols-2">
         {team.map((member) => (

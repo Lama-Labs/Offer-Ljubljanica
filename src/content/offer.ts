@@ -154,26 +154,31 @@ export const offerParts: readonly OfferPart[] = [
 ] as const
 
 /**
- * The packages, and what taking one is worth.
+ * The discount rules, and what satisfying one is worth.
  *
  * ## Three of them: two pairs and the whole
  *
  * `zagon` is the two parts the offer is actually pushing for; `splet` is the two
  * websites, which share one maintenance contract; `celota` is everything. The
- * first two overlap on `02` and the third contains both, and the hero draws each
- * as a bracket under the cards it covers — so a reader sees every way of
- * combining before they see a price. That is why the labels have to read as
- * package names rather than as reasons for a discount.
+ * first two overlap on `02` and the third contains both.
  *
  * They stack rather than replace each other: taking all three matches all three
  * rules and gets all three savings. Which is also the constraint on adding a
  * fourth — every rule here has to be worth granting *on top of* the ones it
- * overlaps, or it is a discount invented to justify a bracket.
+ * overlaps, or it is a discount invented to make a total look smaller.
  *
- * A rule whose parts are not next to each other in page order cannot be drawn as
- * a bracket and is silently left out of that graphic. It still applies to the
- * total; it simply has no shape. Keep new rules contiguous if they are meant to
- * appear up there.
+ * ## Why the page never names them
+ *
+ * It used to. Each rule was drawn as a bracket under the hero cards and named in
+ * the totals panel, so the reader met three products — `Paket Zagon`, `Paket
+ * Splet`, `Paket Celota` — layered over the three they were actually choosing
+ * between. Two vocabularies for one offer is one more than a reader will hold,
+ * and the packages were the invented half.
+ *
+ * So the rules are arithmetic now and nothing else. They move the figures on the
+ * rows and the single `Popust` line in the panel; no part of the page says a
+ * package exists. `label` and `reason` below are kept for whoever edits this
+ * file — neither is rendered anywhere.
  *
  * ## Why a rule table rather than tier prices
  *
@@ -183,30 +188,27 @@ export const offerParts: readonly OfferPart[] = [
  * they selected, and every rule that matches applies — so the saving grows as
  * the offer does, which is the whole mechanism by which this page argues for
  * taking the first two parts together.
- *
- * The order matters only for display: matched rules are listed top to bottom.
  */
 export type BundleRule = {
   id: string
   /** Every part that must be selected for the rule to apply. */
   requires: readonly OfferPartId[]
+  /** Names the rule for whoever edits this file. Not rendered. */
   label: string
   /**
    * Whose price the discount comes off.
    *
-   * ## Why a package names a part
+   * ## Why a rule names a part
    *
-   * A discount has to land somewhere the reader can see it. Held only as a lump
-   * sum against the total, it appears as a line in the panel — `Paket Zagon
-   * −100 €` — beside three rows whose prices never move, and a reader ticking
-   * the second box has no reason to believe the first one got cheaper. Naming
-   * the part lets the row show it: `500 €` struck, `400 €` charged, on the line
-   * that changed.
+   * A discount has to land somewhere the reader can see it. Held only against
+   * the total it is a single figure beside three rows whose prices never move,
+   * and a reader ticking the second box has no reason to believe the first one
+   * got cheaper. Naming the part lets the row show it: `500 €` struck, `400 €`
+   * charged, on the line that changed.
    *
-   * It is also the honest answer. Every discount in this offer is a discount on
-   * something specific — the site is quicker to build alongside the booking
-   * system, the second site's maintenance is absorbed by the first — and a
-   * total is where those facts go to become unattributable.
+   * This matters more now that the panel prints one `Popust` and no longer
+   * itemises where it came from: the rows are the only place a discount is
+   * attributable at all.
    *
    * **Must be one of `requires`.** A rule can only apply when all of its parts
    * are selected, so pointing this at a part outside that set would attribute a
@@ -224,7 +226,7 @@ export type BundleRule = {
    * charged rather than deferred.
    */
   monthlyDiscount: number
-  /** Why this discount exists. Stated on the page — an unexplained discount reads as a markup that was there before. */
+  /** Why this discount exists. Kept as a note to the price file, not rendered. */
   reason: string
 }
 
@@ -257,8 +259,8 @@ export const bundleRules: readonly BundleRule[] = [
       'Obe strani gostujeta na istem strežniku in ju posodabljamo z istim posegom, zato je vzdrževanje eno samo. Plačate ga za obe skupaj, ne za vsako posebej.',
   },
   /*
-    Declared last so that it is the widest bracket and lands under the other two,
-    which is where a grouping notation puts the set that contains the rest.
+    Declared last: it is the rule that contains the other two, and matched
+    rules are applied in the order they appear here.
   */
   {
     id: 'celota',
@@ -413,14 +415,14 @@ export const team: readonly TeamMember[] = [
     kind: 'build',
     role: 'Razvoj in rezervacijski sistem',
     website: 'https://matej.horvat.si',
-    bio: 'Inženir računalništva in informatike z leti izkušenj na obeh straneh aplikacije: od uporabniškega vmesnika za gosta, do strežnika. Natančen do zadnje podrobnosti. Skrbi za pravilno in nemoteno delovanje platforme, da se lahko vi osredotočite na posel.',
+    bio: 'Magister računalništva in informatike z leti izkušenj na obeh straneh aplikacije: od uporabniškega vmesnika za gosta, do strežnika. Natančen do zadnje podrobnosti. Skrbi za pravilno in nemoteno delovanje platforme, da se lahko vi osredotočite na posel.',
     avatar: '/team/matej-horvat.webp',
   },
   {
     name: 'Luka Kopajtič',
     kind: 'advise',
     role: 'Blagovna znamka in oblikovanje',
-    website: 'https://lukakopajtic.com',
+    website: 'https://design.lukakopajtic.com',
     bio: 'Svetuje pri tem, po čem vas bo gost prepoznal: logotip, barve in pisave, ki potem veljajo za obe strani, za tiskane materiale in za vstopnice. Oblikuje od leta 2015, od 2024 vodi lasten studio, o znamkah pa piše mesečnik za več kot 2.500 bralcev.',
     avatar: '/team/luka-kopajtic.webp',
   },

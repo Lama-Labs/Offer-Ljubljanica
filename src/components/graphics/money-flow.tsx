@@ -1,5 +1,7 @@
+import type { ReactNode } from 'react'
+
 import { moneyFlow } from '@/content/copy'
-import { Copy } from '@/components/ui/copy'
+import { GraphicSection } from '@/components/sections/graphic-section'
 import { eur, eurExact, group } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -12,28 +14,52 @@ import { cn } from '@/lib/utils'
  * one ticket split two ways, it is the one thing in this section a reader takes
  * in without reading.
  *
- * ## Why the bar has three parts now
+ * ## Why it is one table and not three blocks
  *
- * It used to have one: how much of €100 survives. That drawing was flattering
- * and slightly false — card payments cost a bank fee whoever collects them, and
- * the reader most likely to notice is the one who already runs a Stripe account
- * and knows what he pays. So the bar now carries the fee explicitly, in the same
- * grey, at the same width, in both columns: a solid run for what the operator
- * keeps, a grey stripe for the bank, and open track for what the platform took.
- * Only the open part differs between the two rails, which is exactly the claim.
+ * It used to be a season panel, a column heading, and two cards side by side.
+ * Three objects, and the reader had to hold a figure from the first one in their
+ * head while reading the third — which is the one thing a comparison is supposed
+ * to spare them. The two things being compared were also drawn differently: ours
+ * on `{paper}` inside a strong hairline, theirs flat on the band, so the cards
+ * differed before their contents did.
  *
- * ## Why the red is on our side and nowhere else
+ * Now there is one table. The same two columns run the whole height of it, every
+ * figure sits on the row of the thing it answers, and the two numbers that
+ * differ are the only two that do not line up. `Gost plača` and
+ * `Banka za kartico` print the same figure twice on purpose: a reader can see
+ * that the comparison is not being helped along before they reach the row where
+ * it stops matching.
  *
- * The obvious move is to paint the platform's cut in the accent colour, and it
- * would be the wrong red: on this page `{signal}` means *this is the offer*, so
- * spending it on a competitor's commission would make the deduction the marked
- * thing. It goes on our side instead — the full bar the operator keeps, and the
- * zero they pay us across a season — where it says the same thing the accent
- * says everywhere else on the page.
+ * ## Why the season row is last and carries the subscription
  *
- * The comparison itself is still carried by weight, not by hue: our bar runs
- * solid to the bank stripe and theirs stops short, which reads correctly in
- * greyscale, on a projector, and to anyone who cannot separate the two colours.
+ * The table runs in the order the argument is earned — one ticket, split; then
+ * what that split becomes over six thousand of them. See the note on `moneyFlow`
+ * in `copy.ts` for why round that way and not the other.
+ *
+ * Both season figures are prefixed `Mesečna naročnina +`, in the same grey, at
+ * the same size, because both columns charge one. Without it the row reads as
+ * `0 €` against `5.520 €`, which overstates a case that does not need
+ * overstating; with it the row reads as *a subscription* against *a subscription
+ * and €5.520*, which is what is actually being compared. The prefix is the one
+ * thing in the section that says the same words in both columns, and it is the
+ * reason the fine print no longer has to.
+ *
+ * ## Why green, and why only here
+ *
+ * The accent on this page is red and it means *this is the offer*. Painting the
+ * kept column red would have said the right thing in the wrong vocabulary — the
+ * claim in this section is not that Alpaca is the marked option, it is that one
+ * column costs less than the other, and less is the argument.
+ *
+ * So the column is `{savings}`, the page's one green, which already carries
+ * exactly that meaning on the struck-through totals in the price panel: *money
+ * you are not spending*. A reader arrives here having seen it there. It is spent
+ * as a tint down the whole Alpaca column rather than on the figures alone,
+ * because what is cheaper is the column, not any one number in it.
+ *
+ * The comparison does not depend on the colour. Ours reads `0 €` where theirs
+ * reads four figures, which is correct in greyscale, on a projector, and to
+ * anyone who cannot separate the two hues.
  *
  * ## Why the figures are shown to the cent
  *
@@ -41,190 +67,263 @@ import { cn } from '@/lib/utils'
  * two cents against nothing is `1 €` against `0 €`, which reads as a rounding
  * artefact rather than as seven and a half percent of the fare.
  */
-function Rail({
-  title,
-  cutLabel,
-  cut,
-  cutShare,
-  note,
-  emphasis,
-}: {
-  title: string
-  cutLabel: string
-  cut: number
-  cutShare?: string
-  note: string
-  emphasis: boolean
-}) {
-  const { ticket, bankFee, paysLabel, keptLabel, bankLabel } = moneyFlow
-  const kept = ticket - bankFee - cut
 
-  const keptPercent = (kept / ticket) * 100
-  const bankPercent = (bankFee / ticket) * 100
+/**
+ * The two money columns, styled once.
+ *
+ * `ours` is the green band; `theirs` is bare. Everything else about them is
+ * identical, which is the point — the columns must not differ anywhere the
+ * figures do not.
+ */
+const cell = {
+  ours: 'bg-savings-tint',
+  theirs: '',
+} as const
 
+/**
+ * Cell padding is `px-2` before `sm` for one reason: the two money columns are
+ * sized by their widest figure and the row heading gets what is left, which on a
+ * 360px screen is under a hundred pixels. Every pixel of horizontal padding
+ * comes out of the words.
+ */
+const numeric = 'px-2 py-3 text-right align-baseline whitespace-nowrap sm:px-4'
+
+/** The `Mesečna naročnina +` line, drawn the same on both sides of the row. */
+function Prefix({ text }: { text: string }) {
   return (
-    <div
-      className={cn(
-        'rounded-lg border p-5 sm:p-6',
-        emphasis ? 'border-hairline-strong bg-paper' : 'border-hairline bg-transparent',
-      )}
-    >
-      <p className={cn('label-mono', emphasis ? 'text-ink' : 'text-faint')}>{title}</p>
-
-      <div className="mt-4 flex items-baseline justify-between gap-4">
-        <p className="type-caption text-mute">{paysLabel}</p>
-        <p className="num-sm text-body">{eurExact(ticket)}</p>
-      </div>
-
-      {/*
-        The bar is the sentence. `aria-hidden` because the rows under it already
-        say the same thing in words, and a progress role here would announce
-        "eighty-six percent" without ever saying of what.
-      */}
-      <div className="bg-mist mt-2 flex h-3 overflow-hidden rounded-sm" aria-hidden>
-        <div
-          className={cn('h-full', emphasis ? 'bg-signal' : 'bg-faint')}
-          style={{ width: `${keptPercent}%` }}
-        />
-        <div className="bg-hairline-strong h-full" style={{ width: `${bankPercent}%` }} />
-      </div>
-
-      {/*
-        Both deductions, in the order the bar draws them. The bank line is
-        identical in the two rails on purpose — it is the control against which
-        the line under it reads.
-      */}
-      <dl className="mt-4 space-y-1.5">
-        <div className="flex items-baseline justify-between gap-4">
-          <dt className="type-caption text-mute flex items-center gap-2">
-            <span
-              className="bg-hairline-strong inline-block size-2 shrink-0 rounded-xs"
-              aria-hidden
-            />
-            {bankLabel}
-          </dt>
-          <dd className="num-sm text-mute">−{eurExact(bankFee)}</dd>
-        </div>
-
-        <div className="flex items-baseline justify-between gap-4">
-          <dt className="type-caption text-mute flex items-center gap-2">
-            <span
-              className={cn(
-                'inline-block size-2 shrink-0 rounded-xs',
-                cut > 0 ? 'bg-mist ring-hairline-strong ring-1' : 'bg-transparent',
-              )}
-              aria-hidden
-            />
-            {cutLabel}
-            {cutShare ? <span className="text-faint">({cutShare})</span> : null}
-          </dt>
-          <dd className={cn('num-sm', cut > 0 ? 'text-body' : 'text-faint')}>
-            {cut > 0 ? `−${eurExact(cut)}` : eurExact(0)}
-          </dd>
-        </div>
-      </dl>
-
-      <div className="border-hairline mt-4 flex items-baseline justify-between gap-4 border-t pt-4">
-        <p className="type-caption text-mute">{keptLabel}</p>
-        <p className={cn('num-lg', emphasis ? 'text-ink' : 'text-mute')}>{eurExact(kept)}</p>
-      </div>
-
-      <p className="type-caption text-mute mt-3">{note}</p>
-    </div>
+    <span className="type-caption text-mute mb-1 block font-normal whitespace-normal">{text}</span>
   )
 }
 
-/**
- * The same ninety-two cents, multiplied by a season — and the first thing the
- * figure says.
- *
- * This is where the graphic stops being an accounting diagram and becomes the
- * reason to choose one of the two, which is why it opens rather than closes.
- * Ninety-two cents read first makes the whole question look small; four figures
- * read first make the ticket breakdown underneath into evidence rather than
- * into an argument the reader has already dismissed.
- *
- * A per-booking price is not a small number that stays small — it is a share of
- * the business that grows precisely as fast as the business does, and the only
- * honest way to show that is to run it out over a season and put the two totals
- * next to each other.
- */
-function Season() {
-  const { season, theirs } = moneyFlow
+function Row({
+  label,
+  sub,
+  ours,
+  theirs,
+  size = 'sm',
+  rule = 'hairline',
+  win = false,
+  prefix,
+  last = false,
+}: {
+  label: string
+  /** The qualifier that belongs to the row rather than to either figure. */
+  sub?: string
+  ours: ReactNode
+  theirs: ReactNode
+  /** `xl` is the season row — the only figures in the section set as a total. */
+  size?: 'sm' | 'md' | 'xl'
+  /** `strong` closes the breakdown, so the subtotal under it needs no rule. */
+  rule?: 'hairline' | 'strong'
+  /**
+   * Whether our figure on this row is actually the better one.
+   *
+   * Only those are set in `{savings}`. `Gost plača` and `Banka za kartico` print
+   * the same figure in both columns, and colouring ours green on those rows
+   * would have claimed an advantage on two rows where there is none — the green
+   * would be saying *ours* when the rest of the page has it saying *money you
+   * are not spending*. The tint identifies the column; the ink says who won.
+   */
+  win?: boolean
+  /**
+   * A line set over both figures, identical in the two columns. It wraps where
+   * the figures may not, so a long prefix costs the row heading no width.
+   */
+  prefix?: string
+  last?: boolean
+}) {
+  const border = last
+    ? ''
+    : rule === 'strong'
+      ? 'border-hairline-strong border-b'
+      : 'border-hairline border-b'
+
+  /*
+    Both totals step down a size before `sm`, which is the one responsive thing
+    in this table and is not a nicety. A table column is as wide as its widest
+    line, and its widest line here is a number that cannot wrap: `5.520 €` set
+    at `num-xl` is 150px, which on a 360px screen is taken directly out of the
+    row heading next to it. Small enough to leave the words their room, and full
+    size the moment there is room for both.
+  */
+  const figure =
+    size === 'xl' ? 'num-md sm:num-xl' : size === 'md' ? 'num-sm sm:num-lg' : 'num-sm'
+
+  const pad = size === 'xl' ? 'py-5' : size === 'md' ? 'py-4' : 'py-3'
 
   return (
-    <div className="border-hairline-strong bg-paper mt-6 rounded-lg border p-5 sm:p-6">
-      <p className="label-mono text-ink">
-        {season.label} — {group(season.tickets)} vstopnic
-      </p>
+    <tr>
+      <th scope="row" className={cn('py-3 pr-3 text-left align-baseline', border, pad)}>
+        <span className={cn('block', size === 'sm' ? 'type-caption text-mute' : 'type-body-sm text-ink font-semibold')}>
+          {label}
+        </span>
+        {sub ? <span className="type-caption text-faint mt-0.5 block">{sub}</span> : null}
+      </th>
 
-      <Copy text={season.lead} className="type-body-sm text-mute measure mt-3" />
+      <td
+        className={cn(
+          numeric,
+          cell.ours,
+          border,
+          pad,
+          figure,
+          win ? 'text-savings' : size === 'sm' ? 'text-body' : 'text-ink',
+          last && 'rounded-b-md',
+        )}
+      >
+        {prefix ? <Prefix text={prefix} /> : null}
+        {ours}
+      </td>
 
-      {/*
-        The two totals, at the size the summary gives its own totals. They are
-        the largest numerals in the section on purpose: everything below is the
-        working that produces them.
-      */}
-      <div className="border-hairline mt-5 grid gap-5 border-t pt-5 sm:grid-cols-2 sm:gap-3">
-        <div>
-          <p className="type-caption text-mute">{season.oursLabel}</p>
-          <p className="num-xl text-signal mt-1.5">{eur(0)}</p>
-        </div>
-        <div>
-          <p className="type-caption text-mute">{season.theirsLabel}</p>
-          <p className="num-xl text-mute mt-1.5">{eur(season.tickets * theirs.cut)}</p>
-        </div>
-      </div>
-
-      <p className="type-caption text-faint mt-4">{season.note}</p>
-    </div>
+      <td
+        className={cn(
+          numeric,
+          cell.theirs,
+          border,
+          pad,
+          figure,
+          size === 'sm' ? 'text-body' : 'text-ink',
+        )}
+      >
+        {prefix ? <Prefix text={prefix} /> : null}
+        {theirs}
+      </td>
+    </tr>
   )
 }
 
 export function MoneyFlow() {
+  const { ticket, bankFee, ours, theirs, season } = moneyFlow
+
+  const keptOurs = ticket - bankFee - ours.cut
+  const keptTheirs = ticket - bankFee - theirs.cut
+
   return (
-    <figure className="mt-14">
-      <figcaption>
-        <p className="label-mono text-faint flex items-center gap-2.5">
-          <span className="bg-hairline-strong inline-block h-px w-6" aria-hidden />
-          {moneyFlow.label}
-        </p>
-        <p className="type-subtitle text-ink mt-3">{moneyFlow.heading}</p>
-        <Copy text={moneyFlow.lead} className="type-body-sm text-mute measure mt-2" />
-      </figcaption>
+    <GraphicSection part="booking" heading={moneyFlow.heading} lead={moneyFlow.lead}>
+      <div className="border-hairline bg-paper rounded-lg border p-4 sm:p-6">
+        <table className="w-full border-separate border-spacing-0">
+          {/*
+            The two money columns are held equal and wide from `sm` up. Left to
+            size themselves they take exactly as much as their widest figure and
+            no more, which on a 1120px band parks them against the right edge
+            with half a card of white between the row heading and the first
+            number — a comparison the eye has to travel to make. Below `sm` the
+            widths come off again and the columns shrink to their contents,
+            because there the scarce thing is the heading column, not the gap.
+          */}
+          <colgroup>
+            <col />
+            <col className="sm:w-[32%]" />
+            <col className="sm:w-[32%]" />
+          </colgroup>
 
-      <Season />
+          <caption className="sr-only">
+            {moneyFlow.heading} {ours.title} in {theirs.title}, na isto vstopnico in isto sezono.
+          </caption>
 
-      {/*
-        The breakdown is now subordinate: a column heading, then the rails. It
-        answers "where did that figure come from", which is a question the
-        reader only asks after the figure has landed.
-      */}
-      <div className="mt-8 flex items-baseline gap-3">
-        <p className="label-mono text-faint">{moneyFlow.breakdown.label}</p>
-        <span className="bg-hairline h-px flex-1" aria-hidden />
-      </div>
-      <p className="type-caption text-mute mt-2">{moneyFlow.breakdown.lead}</p>
+          <thead>
+            <tr>
+              <td />
 
-      <div className="mt-4 grid gap-3 md:grid-cols-2">
-        <Rail
-          title={moneyFlow.ours.title}
-          cutLabel={moneyFlow.ours.cutLabel}
-          cut={moneyFlow.ours.cut}
-          note={moneyFlow.ours.note}
-          emphasis
-        />
-        <Rail
-          title={moneyFlow.theirs.title}
-          cutLabel={moneyFlow.theirs.cutLabel}
-          cut={moneyFlow.theirs.cut}
-          cutShare={moneyFlow.theirs.cutShare}
-          note={moneyFlow.theirs.note}
-          emphasis={false}
-        />
+              {/* The one green edge in the section. It caps the column rather
+                  than underlining a heading, so it reads as *this column* and
+                  not as *this word*. */}
+              <th
+                scope="col"
+                className={cn(
+                  'label-mono text-savings border-savings rounded-t-md border-t-2 px-2 py-3 text-right align-bottom sm:px-4',
+                  cell.ours,
+                )}
+              >
+                {ours.title}
+              </th>
+
+              <th
+                scope="col"
+                className="label-mono text-mute border-t-2 border-transparent px-2 py-3 text-right align-bottom sm:px-4"
+              >
+                {theirs.column}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {/*
+              One ticket, split. This is the row set a reader can check against a
+              price list they already know, which is why the section opens on it
+              rather than on the season total it multiplies into.
+            */}
+            <Row label={moneyFlow.paysLabel} ours={eurExact(ticket)} theirs={eurExact(ticket)} />
+
+            <Row
+              label={moneyFlow.bankLabel}
+              ours={`−${eurExact(bankFee)}`}
+              theirs={`−${eurExact(bankFee)}`}
+            />
+
+            {/* The one row the whole section exists to print. */}
+            <Row
+              label={theirs.cutLabel}
+              ours={eurExact(ours.cut)}
+              theirs={
+                <>
+                  −{eurExact(theirs.cut)}
+                  <span className="type-caption text-faint mt-0.5 block font-normal">
+                    {theirs.cutShare}
+                  </span>
+                </>
+              }
+              win
+            />
+
+            <Row
+              label={moneyFlow.keptLabel}
+              ours={eurExact(keptOurs)}
+              theirs={eurExact(keptTheirs)}
+              size="md"
+              rule="strong"
+              win
+            />
+
+            {/*
+              And what that becomes. A per-booking price is not a small number
+              that stays small — it is a share of the business that grows exactly
+              as fast as the business does, and the only honest way to show that
+              is to run one season out and set the two totals side by side.
+            */}
+            <Row
+              label={season.label}
+              sub={`${group(season.tickets)} ${season.sub}`}
+              prefix={season.prefix}
+              ours={eur(0)}
+              theirs={eur(season.tickets * theirs.cut)}
+              size="xl"
+              win
+              last
+            />
+          </tbody>
+        </table>
+
+        {/*
+          One note per column, sitting under the column it belongs to and marked
+          in that column's colour. Each names its side again rather than relying
+          on the alignment, because below `sm` the two stack and the alignment is
+          gone.
+        */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="border-savings border-l-2 pl-3">
+            <p className="label-mono text-savings">{ours.title}</p>
+            <p className="type-caption text-mute mt-1.5">{ours.note}</p>
+          </div>
+
+          <div className="border-hairline-strong border-l-2 pl-3">
+            <p className="label-mono text-faint">{theirs.title}</p>
+            <p className="type-caption text-mute mt-1.5">{theirs.note}</p>
+          </div>
+        </div>
       </div>
 
       <p className="type-caption text-faint measure mt-4">{moneyFlow.footnote}</p>
-    </figure>
+    </GraphicSection>
   )
 }

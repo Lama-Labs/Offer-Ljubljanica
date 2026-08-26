@@ -15,10 +15,11 @@ import { GATE_COOKIE, GATE_COOKIE_OPTIONS, gateToken, verify } from '@/lib/gate'
  *
  * ## Why the query survives
  *
- * A forwarded link carries the sender's selection in `?paket=`, and that is the
- * whole point of forwarding it — "here is the version I configured". Dropping
- * it on the way through the gate would mean the second reader unlocks the
- * document and lands on a different offer from the one they were shown.
+ * Whatever a reader arrived with, they should still have once they are through
+ * the door: the gate is a lock on the document, not a filter on the address it
+ * was reached at. Nothing on the page depends on a parameter today — the
+ * selection lives in the session and not in the URL — so this is a property of
+ * the gate rather than a courtesy to any one link, and it costs nothing to keep.
  *
  * `next` is a query string and never a URL: the destination path is written
  * here, so nothing a visitor can put in that field redirects them off the site.

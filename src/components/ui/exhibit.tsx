@@ -15,10 +15,37 @@ import { cn } from '@/lib/utils'
  * them dropped in as cards with shadows is how a document turns into a deck.
  *
  * So they are not displayed, they are cited. The frame is the same `<figure>`
- * the two drawings already use — mono label over a rule, `type-subtitle`
- * heading, caption on a hairline at the foot — because a reader should meet the
- * same kind of object each time, whether what is inside it was drawn here or
- * captured elsewhere. What is new is only what happens *on* the image.
+ * the two drawings already use — a `type-subhead` heading, a caption in
+ * `{faint}` at the foot — because a reader should meet the same kind of object
+ * each time, whether what is inside it was drawn here or captured elsewhere.
+ * What is new is only what happens *on* the image.
+ *
+ * ## Why the caption no longer sits on a rule
+ *
+ * It used to, and the rule was right while the figure was the last thing in its
+ * group: a hairline under the caption closed the figure off from whatever came
+ * next. The figure leads the group now, so that same hairline fell between the
+ * screenshot and the nine sentences explaining it — a divider in the middle of
+ * one claim, while the boundary between two claims had none. The rule moved to
+ * where the subject actually changes, which is `OfferPartSection`; the caption
+ * keeps its distance from the plate and nothing else.
+ *
+ * ## Why it carries no margin of its own
+ *
+ * It used to open with `mt-10`, from when it was always the last thing in a
+ * group. Now that it leads one, the gap belongs to whichever side of it the
+ * caller wants — `OfferPartSection` spaces the group with `space-y-10`, which
+ * puts the same forty pixels between the figure and the lines under it and none
+ * above, where the group's own heading has already set the distance.
+ *
+ * ## Why there is no mono label over the heading
+ *
+ * Every figure carried one: `Obrazec za rezervacijo`, `Nadzorna plošča`,
+ * `Prijava na pomolu`, `Skica postavitve`. Each named the thing the heading
+ * directly beneath it was already about, one size smaller and in a quieter
+ * voice, and the two lines together read as a caption apologising for a
+ * caption. What a figure is called is its heading. The eyebrow was a label on a
+ * label, and the prop that rendered it is gone with the words.
  *
  * ## The callouts are the whole point
  *
@@ -40,11 +67,12 @@ import { cn } from '@/lib/utils'
  *
  * ## Why the marker is a wash and not a fill
  *
- * `{signal}` filled reports state on this page: a selected card, a live
- * numeral, the totals panel. `{signal}` stroked on `{signal-wash}` is a mark —
- * it says *which thing this is*. A callout is a mark, so it takes the mark's
- * shape, which is `IconTile`'s exactly: the same wash, the same radius, one
- * step smaller. Nothing here is a new colour.
+ * The accent filled reports state on this page: a selected card, a live
+ * numeral, the totals panel. The accent stroked on its wash is a mark — it says
+ * *which thing this is*. A callout is a mark, so it takes the mark's shape,
+ * which is `IconTile`'s exactly: the same wash, the same radius, one step
+ * smaller. Nothing here is a new colour — inside a part section the accent is
+ * that part's hue, which is how a callout ends up teal under `01`.
  */
 
 /**
@@ -77,10 +105,9 @@ export type Callout = {
  * pure trailing space and would otherwise sit the letter left of centre.
  */
 const marker =
-  'label-mono bg-signal-wash text-signal flex size-6 shrink-0 items-center justify-center rounded-md ps-[0.09em]'
+  'label-mono bg-accent-wash text-accent flex size-6 shrink-0 items-center justify-center rounded-md ps-[0.09em]'
 
 export function Exhibit({
-  label,
   heading,
   lead,
   src,
@@ -96,7 +123,6 @@ export function Exhibit({
   plateWidth,
   className,
 }: {
-  label: string
   heading: string
   lead?: string
   src: string
@@ -144,14 +170,10 @@ export function Exhibit({
   const beside = plateWidth !== undefined
 
   return (
-    <figure className={cn('mt-10', className)}>
+    <figure className={className}>
       <figcaption>
-        <p className="label-mono text-faint flex items-center gap-2.5">
-          <span className="bg-hairline-strong inline-block h-px w-6" aria-hidden />
-          {label}
-        </p>
-        <p className="type-subtitle text-ink mt-3">{heading}</p>
-        {lead ? <Copy text={lead} className="type-body-sm text-mute measure mt-2" /> : null}
+        <p className="type-subhead text-ink">{heading}</p>
+        {lead ? <Copy text={lead} className="type-body-sm text-mute measure mt-3" /> : null}
       </figcaption>
 
       <div
@@ -225,7 +247,7 @@ export function Exhibit({
       </div>
 
       {caption ? (
-        <p className="type-caption text-faint border-hairline mt-6 border-t pt-4">{caption}</p>
+        <p className="type-caption text-faint mt-4">{caption}</p>
       ) : null}
     </figure>
   )
