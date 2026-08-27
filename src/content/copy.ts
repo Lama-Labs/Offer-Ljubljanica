@@ -393,83 +393,144 @@ export const parts: Record<OfferPartId, PartCopy> = {
  * A cruise ticket is about €12, and per-booking pricing was designed for €150
  * day tours — which is the whole argument in Slovenia, and it is invisible at
  * €100 and unmissable at €12. So the graphic draws one real ticket, names the
- * bank fee in both columns, and lets the difference be the only thing that
+ * bank fee in every column, and lets the difference be the only thing that
  * differs.
+ *
+ * ## Why three named platforms and not one anonymous one
+ *
+ * This section used to run a single column headed `Platforma`, charging
+ * `0,50 € + 3,5 %` and described as a `tipičen cenik`. The arithmetic was right
+ * and the label was not: that is Regiondo's model and only Regiondo's. Neither
+ * Bókun nor Rezdy charges a fixed amount per ticket at all, so the sentence
+ * introducing the table — *a fixed amount and a percentage* — was false about
+ * two of the three platforms it claimed to describe, and the largest number on
+ * the page was attributed to nobody in particular.
+ *
+ * An operator checks that. They are being sold a booking system, so they have
+ * looked at booking systems, and the first thing a competitor says when this
+ * page is forwarded to them is *that is not our price*. One unattributable
+ * €5.520 is worth less than three figures each of which survives being looked
+ * up, which is why the three real platforms are named together with the plan the
+ * rate belongs to. It costs the drama of a single number and buys the only thing
+ * this section actually trades in.
+ *
+ * The spread is the argument now: the same ticket costs €0,18 on one platform
+ * and around €0,90 on another, and nothing about the reader's business changed
+ * between those two figures. Ours is €0 in all of them.
+ *
+ * ## Why Regiondo's figures are approximate and the others are not
+ *
+ * Bókun and Rezdy publish their rates against a named plan. Regiondo does not:
+ * its pricing page headlines *zero commission* and says only that a small
+ * per-booking fee applies. The `0,50 € + 3,5 %` that produced the old `0,92 €`
+ * comes from operators reporting what they were charged, not from a price list,
+ * and a figure quoted to the cent claims a source this page has not got. So that
+ * column is rounded and marked approximate wherever it prints, and its note says
+ * where the number came from. A reader who checks finds exactly what they were
+ * told they would find.
  *
  * ## Why the bank fee appears on our side too
  *
- * Because it does. Showing it is what makes the zero next to `Naš delež`
- * readable as a fact rather than as a sales line — a reader who finds the one
- * deduction we could have hidden, stated plainly, has less reason to go looking
- * for others. It is also the same figure in both columns, so drawing it twice
- * makes the comparison honest without costing the comparison anything.
+ * Because it does. Showing it is what makes the zero on our side of
+ * `Delež platforme` readable as a fact rather than as a sales line — a reader
+ * who finds the one deduction we could have hidden, stated plainly, has less
+ * reason to go looking for others. It is also the same figure in every column,
+ * so drawing it four times makes the comparison honest without costing the
+ * comparison anything.
  *
  * ## Why the ticket comes first and the season last
  *
- * Because that is the order in which the argument is earned. Ninety-two cents
- * off a €12 fare is a figure nobody disputes — it is arithmetic, and the reader
+ * Because that is the order in which the argument is earned. Eighteen cents off
+ * a €12 fare is a figure nobody disputes — it is arithmetic, and the reader
  * checks it against a price list they already know. Six thousand tickets later
- * it is €5.520, and a reader who has just watched the cents come off one ticket
- * meets that number having done the multiplication themselves.
+ * it is between €1.080 and €5.400, and a reader who has just watched the cents
+ * come off one ticket meets those totals having done the multiplication
+ * themselves.
  *
- * Led with, the season total is a sales figure and gets read as one. Arrived at,
+ * Led with, a season total is a sales figure and gets read as one. Arrived at,
  * it is the consequence of a deduction the reader has already accepted, which is
  * the one claim a percentage cannot answer: it grows exactly as fast as the
  * business does. A good season makes it worse.
  *
  * ## Why the labels are short
  *
- * Every one of them is now a row heading in a three-column table whose two
- * money columns are sized by their widest figure, so the heading column gets
- * whatever is left — about seventy pixels on a phone. `Prek rezervacijske
- * platforme` set three lines deep in that space; `Rezervacijska platforma` sets
- * two. Nothing here is written longer than the column it has to live in.
- *
- * Rates are stated as a typical price list rather than as any one vendor's,
- * because vendors change theirs and a proposal that quotes a competitor's
- * pricing ages badly the week they discount it.
+ * Every one of them is a row heading in a table whose four money columns are
+ * sized by their widest figure, so the heading column gets whatever is left.
+ * Nothing here is written longer than the column it has to live in.
  */
 export const moneyFlow = {
   heading: 'Koliko provizije računa Alpaca Booking?',
-  lead: 'Alpaca Booking računa le **mesečno naročnino**. **Konkurenčne** rezervacijske platforme si od vsake vstopnice vzamejo **fiksen znesek in odstotek**. Spodaj sta oba načina drug ob drugem, na isti vstopnici in na isti sezoni.',
+  lead: 'Alpaca Booking računa le **mesečno naročnino**. **Konkurenčne** platforme računajo odstotek od vsake spletne rezervacije, nekatere pa zraven še **fiksni znesek na vstopnico**. Spodaj so trije razširjeni ponudniki ob nas, na isti vstopnici in na isti sezoni.',
   /** The fare the whole graphic is drawn from. PLACEHOLDER — a real ticket price. */
   ticket: 12,
   paysLabel: 'Gost plača',
   keptLabel: 'Ostane vam',
+  /** Heads the one row the whole section exists to print. */
+  cutLabel: 'Delež platforme',
   /**
-   * The card fee, identical in both columns. Stripe's European consumer rate on
-   * a €12 fare: 1.5 % + 0.25 €. Non-European cards cost more; the footnote says
-   * so rather than the rail, because the figure is the same on both sides and
-   * changing it changes neither.
+   * The card fee, identical in every column. Stripe's European consumer rate on
+   * a €12 fare: 1,5 % + 0,25 €. Non-European cards cost more; the footnote says
+   * so rather than the rail, because the figure is the same on every side and
+   * changing it changes none of them.
    */
   bankLabel: 'Banka za kartico',
   bankFee: 0.43,
+  /**
+   * Set once over the phone cards. The first two rows of the table carry the
+   * same figure in all four columns, and four cards repeating them is one fact
+   * printed eight times on the screen that has room for none of it.
+   */
+  sharedLabel: 'Enako povsod',
   ours: {
     title: 'Alpaca Booking',
-    cutLabel: 'Naš delež',
+    column: 'Alpaca',
     cut: 0,
     note: 'Bančno provizijo plačate banki neposredno, nam pa mesečni znesek — enak pri tisoč vstopnicah in pri desetih tisoč.',
   },
-  theirs: {
-    title: 'Rezervacijska platforma',
-    /**
-     * What the column is headed. One word, because the column is sized by its
-     * widest line and `REZERVACIJSKA` set in tracked mono capitals is 110px of
-     * a phone's 288 — width taken straight out of the row headings beside it.
-     * The full name is two lines below, on the note that belongs to this column.
-     */
-    column: 'Platforma',
-    cutLabel: 'Delež platforme',
-    cut: 0.92,
-    /**
-     * The cut as a share of the fare, which is the figure that lands. Set under
-     * the euro figure and pared to the percentage alone: the row it sits on is
-     * already headed `Delež platforme`, and the row above it says what the
-     * ticket costs, so `vstopnice` was a word repeating two labels.
-     */
-    cutShare: '7,7 %',
-    note: 'Tipičen cenik je 0,50 € plus 3,5 % od vsake prodane vstopnice.',
-  },
+  /**
+   * The three platforms an operator in this market actually compares us against,
+   * in the order their charge grows — which is also the order that makes the
+   * point, because the reader watches the same ticket get more expensive down
+   * the table without anything about their business changing.
+   *
+   * `column` heads the column and `title` heads its note: the heading is set in
+   * tracked mono capitals and the column is sized by the widest thing in it, so
+   * the plan name lives under the table where there is room for it. The rate
+   * belongs to the plan rather than to the vendor, which is exactly why the plan
+   * is named at all.
+   */
+  theirs: [
+    {
+      id: 'bokun',
+      column: 'Bókun',
+      title: 'Bókun START',
+      /** 1,5 % of the fare, no fixed fee. */
+      cut: 0.18,
+      note: 'Paket START: 1,5 % od vsake spletne rezervacije, brez fiksnega zneska na vstopnico.',
+    },
+    {
+      id: 'rezdy',
+      column: 'Rezdy',
+      title: 'Rezdy Foundation',
+      /** 3 % of the fare, no fixed fee. */
+      cut: 0.36,
+      note: 'Paket Foundation: 3 % od vsake rezervacije, brez fiksnega zneska na vstopnico.',
+    },
+    {
+      id: 'regiondo',
+      column: 'Regiondo',
+      title: 'Regiondo',
+      /**
+       * A fixed amount plus about 3,5 %, rounded to ten cents and marked
+       * approximate everywhere it prints. See the note above the export: the
+       * rate is reported by operators rather than published, and a figure given
+       * to the cent would claim a source this page has not got.
+       */
+      cut: 0.9,
+      approx: true,
+      note: 'Regiondo provizije ne objavlja — navaja le majhen znesek na rezervacijo. Izračun je po vrednostih, ki jih poročajo uporabniki: fiksni znesek in približno 3,5 %.',
+    },
+  ],
   season: {
     /** The row heading. The ticket count is set under it, from `tickets`. */
     label: 'Čez sezono plačate',
@@ -478,20 +539,22 @@ export const moneyFlow = {
     /** Reads as `6.000 vstopnic`, composed around `tickets`. */
     sub: 'vstopnic',
     /**
-     * Set over both season figures, identical and in the same grey, because it
-     * is true of both: everybody here sells a subscription. Stating it on the
-     * row rather than in the small print is what makes the figures under it
-     * comparable — one column is a subscription and nothing else, the other is a
-     * subscription and €5.520, and that is the whole difference.
+     * Set over every season figure, identical and in the same grey, because it
+     * is true of all of them: everybody here sells a subscription. Stating it on
+     * the row rather than in the small print is what makes the figures under it
+     * comparable — one column is a subscription and nothing else, the other
+     * three are a subscription and a commission, and that is the whole
+     * difference.
      *
-     * It also retires the line the footnote used to carry. A qualification a
-     * reader has to find at the bottom of the section to know what the big
-     * number leaves out belongs on the number.
+     * What each subscription costs is deliberately not here. Four monthly prices
+     * on four plans of different scope is a second comparison, argued on a row
+     * that exists to make a first one, and four numbers are not enough for the
+     * reader to weigh it anyway. The footnote says the subscriptions differ.
      */
     prefix: 'Mesečna naročnina +',
   },
   footnote:
-    'Bančna provizija je v obeh stolpcih ista in gre banki, ne nam: 1,5 % + 0,25 € za evropske kartice in 3,15 % + 0,25 € za ostale — pri 12-evrski vstopnici 0,43 € oziroma 0,63 €. Deleži platform se razlikujejo po ponudniku in pogodbi; 0,92 € je izračun po tipičnem ceniku. Fiksno je le to, da mi svojega deleža nimamo.',
+    'Bančna provizija je v vseh stolpcih ista in gre banki, ne nam: 1,5 % + 0,25 € za evropske kartice in 3,25 % + 0,25 € za ostale — pri 12-evrski vstopnici 0,43 € oziroma 0,64 €. Navedeni odstotki veljajo za imenovane pakete in za spletne rezervacije: Bókun rezervacij, sklenjenih na pomolu ali prek Viatorja, ne zaračuna, zato je pri prodaji na kraju samem njegov znesek nižji od izračunanega. Mesečno naročnino zaračuna vsak ponudnik posebej in se razlikuje po paketu. Fiksno je le to, da mi svojega deleža nimamo.',
 } as const
 
 /**
